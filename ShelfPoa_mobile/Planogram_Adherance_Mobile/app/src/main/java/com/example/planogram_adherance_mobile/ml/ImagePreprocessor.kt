@@ -1,79 +1,47 @@
 package com.example.planogram_adherance_mobile.ml
 
 import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
+import android.os.SystemClock
+import android.util.Log
 
 object ImagePreprocessor {
 
     private const val INPUT_SIZE = 640
+    private const val TAG = "ShelfPoaTiming"
 
+    /**
+     * Converts a bitmap into the 1x3x640x640 float tensor YOLOv8 expects.
+     *
+     * The image is STRETCHED to 640x640 (no letterbox padding) to match the
+     * Roboflow "Resize to 640x640 (Stretch)" preprocessing the model was trained on.
+     * Detection boxes (divided by 640 in OnnxYoloRunner) are therefore normalised
+     * to the full original image: multiply x by image width and y by image height
+     * to get pixel coordinates.
+     */
     fun preprocess(bitmap: Bitmap): FloatArray {
+        val t0 = SystemClock.elapsedRealtime()
 
-        val resized = letterbox(bitmap)
+        val resized = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, true)
 
-        val input = FloatArray(1 * 3 * INPUT_SIZE * INPUT_SIZE)
+        // Read all pixels in one call (much faster than getPixel() per pixel)
+        val pixels = IntArray(INPUT_SIZE * INPUT_SIZE)
+        resized.getPixels(pixels, 0, INPUT_SIZE, 0, 0, INPUT_SIZE, INPUT_SIZE)
 
         val channelSize = INPUT_SIZE * INPUT_SIZE
+        val input = FloatArray(3 * channelSize)
 
-        var index = 0
-
-        for (y in 0 until INPUT_SIZE) {
-            for (x in 0 until INPUT_SIZE) {
-
-                val pixel = resized.getPixel(x, y)
-
-                val r = ((pixel shr 16) and 0xFF) / 255f
-                val g = ((pixel shr 8) and 0xFF) / 255f
-                val b = (pixel and 0xFF) / 255f
-
-                input[index] = r
-                input[index + channelSize] = g
-                input[index + channelSize * 2] = b
-
-                index++
-            }
+        // CHW layout, RGB, scaled to 0..1 (same ordering as before)
+        for (i in pixels.indices) {
+            val p = pixels[i]
+            input[i] = ((p shr 16) and 0xFF) / 255f                    // R
+            input[i + channelSize] = ((p shr 8) and 0xFF) / 255f      // G
+            input[i + channelSize * 2] = (p and 0xFF) / 255f          // B
         }
 
+        // createScaledBitmap returns the same object if the input is already 640x640
+        if (resized !== bitmap) resized.recycle()
+
+        Log.d(TAG, "preprocess=${SystemClock.elapsedRealtime() - t0}")
         return input
-    }
-
-    private fun letterbox(bitmap: Bitmap): Bitmap {
-
-        val width = bitmap.width
-        val height = bitmap.height
-
-        val scale = minOf(
-            INPUT_SIZE.toFloat() / width,
-            INPUT_SIZE.toFloat() / height
-        )
-
-        val newW = (width * scale).toInt()
-        val newH = (height * scale).toInt()
-
-        val resized = Bitmap.createScaledBitmap(
-            bitmap,
-            newW,
-            newH,
-            true
-        )
-
-        val output = Bitmap.createBitmap(
-            INPUT_SIZE,
-            INPUT_SIZE,
-            Bitmap.Config.ARGB_8888
-        )
-
-        val canvas = Canvas(output)
-
-        // IMPORTANT: YOLO default padding color
-        canvas.drawColor(Color.rgb(114, 114, 114))
-
-        val padX = (INPUT_SIZE - newW) / 2f
-        val padY = (INPUT_SIZE - newH) / 2f
-
-        canvas.drawBitmap(resized, padX, padY, null)
-
-        return output
     }
 }

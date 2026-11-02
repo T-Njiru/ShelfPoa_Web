@@ -1,6 +1,8 @@
 package com.example.planogram_adherance_mobile.ml
 
 import android.content.Context
+import android.os.SystemClock
+import android.util.Log
 import ai.onnxruntime.*
 import androidx.compose.ui.geometry.Rect
 import java.nio.FloatBuffer
@@ -10,7 +12,7 @@ class OnnxYoloRunner(context: Context) {
     private val ortEnv = OrtEnvironment.getEnvironment()
     private val session: OrtSession
 
-    // Note: With internal NMS, these act as secondary filters
+    // Operating confidence threshold used in the app (reported in Chapter 5)
     private val CONF_THRESHOLD = 0.35f
 
     private val labels = listOf(
@@ -21,47 +23,56 @@ class OnnxYoloRunner(context: Context) {
     )
 
     init {
+        val t0 = SystemClock.elapsedRealtime()
         val modelBytes = context.assets.open("best_model.onnx").use { it.readBytes() }
         session = ortEnv.createSession(modelBytes)
+        Log.d(TAG, "modelLoad=${SystemClock.elapsedRealtime() - t0}")
     }
 
     fun infer(input: FloatArray): List<Detection> {
         val shape = longArrayOf(1, 3, 640, 640)
-        val tensor = OnnxTensor.createTensor(ortEnv, FloatBuffer.wrap(input), shape)
 
-        val results = session.run(mapOf(session.inputNames.first() to tensor))
+        // .use{} closes the input tensor after inference (avoids native memory leaks)
+        OnnxTensor.createTensor(ortEnv, FloatBuffer.wrap(input), shape).use { tensor ->
 
-        results.use {
-            // Based on your Logcat, we only have 'output0'
-            val output = it[0].value as Array<Array<FloatArray>>
-            val raw = output[0] // This is shape [num_detections, 6]
+            val tInf = SystemClock.elapsedRealtime()
+            val results = session.run(mapOf(session.inputNames.first() to tensor))
+            Log.d(TAG, "inference=${SystemClock.elapsedRealtime() - tInf}")
 
-            val detections = mutableListOf<Detection>()
+            results.use {
+                // Single output 'output0' with NMS applied at export: shape [1, num_detections, 6]
+                @Suppress("UNCHECKED_CAST")
+                val output = it[0].value as Array<Array<FloatArray>>
+                val raw = output[0]
 
-            // In this format, each row is ONE detection: [x1, y1, x2, y2, score, class]
-            for (i in raw.indices) {
-                val row = raw[i]
-                val score = row[4]
-                val classId = row[5].toInt()
+                val detections = mutableListOf<Detection>()
 
-                if (score > CONF_THRESHOLD) {
-                    detections.add(
-                        Detection(
-                            className = labels.getOrElse(classId) { "Unknown" },
-                            confidence = score,
-                            box = Rect(
-                                left = row[0] / 640f,
-                                top = row[1] / 640f,
-                                right = row[2] / 640f,
-                                bottom = row[3] / 640f
+                // Each row is one detection: [x1, y1, x2, y2, score, class]
+                for (row in raw) {
+                    val score = row[4]
+                    val classId = row[5].toInt()
+
+                    if (score > CONF_THRESHOLD) {
+                        detections.add(
+                            Detection(
+                                className = labels.getOrElse(classId) { "Unknown" },
+                                confidence = score,
+                                box = Rect(
+                                    left = row[0] / 640f,
+                                    top = row[1] / 640f,
+                                    right = row[2] / 640f,
+                                    bottom = row[3] / 640f
+                                )
                             )
                         )
-                    )
+                    }
                 }
+                return detections
             }
-
-            // No manual NMS needed! The model already filtered it.
-            return detections
         }
+    }
+
+    companion object {
+        private const val TAG = "ShelfPoaTiming"
     }
 }

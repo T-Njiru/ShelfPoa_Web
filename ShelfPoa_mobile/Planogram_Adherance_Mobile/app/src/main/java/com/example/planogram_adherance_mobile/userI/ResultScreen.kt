@@ -22,8 +22,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.planogram_adherance_mobile.ml.Detection
 import com.example.planogram_adherance_mobile.ui.theme.*
+import com.example.planogram_adherance_mobile.models.CurrentUser
 import com.example.planogram_adherance_mobile.models.Outlet
-import com.google.firebase.database.FirebaseDatabase
+import androidx.compose.ui.platform.LocalContext
+import com.example.planogram_adherance_mobile.models.OfflineSync
 import androidx.compose.foundation.Image
 
 data class AuditResult(
@@ -33,7 +35,10 @@ data class AuditResult(
     val totalDetectedItems: Int = 0,
     val status: String = "",
     val outletId: String = "",
-    val outletName: String = ""
+    val outletName: String = "",
+    val uid: String = "",             // NEW
+    val merchandiserId: String = "",  // NEW
+    val auditId: String = ""          // NEW: same id as this visit's OSA + SOS reports
 )
 
 @Composable
@@ -46,7 +51,7 @@ fun ResultScreen(
     selectedOutlet: Outlet?, // NEW
     onBackToDashboard: () -> Unit
 ) {
-    val database = FirebaseDatabase.getInstance().reference
+    val context = LocalContext.current
     var isUploading by remember { mutableStateOf(false) }
 
     Column(
@@ -71,9 +76,10 @@ fun ResultScreen(
 
         Spacer(Modifier.height(24.dp))
 
-        ResultContainer(planogramBitmap, planogramDetections, Color.Blue)
-        Spacer(Modifier.height(16.dp))
-        ResultContainer(shelfBitmap, shelfDetections, Color.Green)
+        // Boxes aligned to the fitted photo, colour-coded, labels on tap (see DetectionOverlay.kt)
+        DetectionOverlay(planogramBitmap, planogramDetections, title = "Planogram (target layout)", height = 190.dp)
+        Spacer(Modifier.height(14.dp))
+        DetectionOverlay(shelfBitmap, shelfDetections, title = "Shelf (as found)", height = 190.dp)
 
         Spacer(Modifier.weight(1f))
 
@@ -81,18 +87,21 @@ fun ResultScreen(
             text = if (isUploading) "Uploading..." else "Submit Result & Exit",
             onClick = {
                 isUploading = true
+                val outletId = selectedOutlet?.id ?: "unknown"
                 val audit = AuditResult(
                     adherenceScore = adherence,
                     totalPlanogramItems = planogramDetections.size,
                     totalDetectedItems = shelfDetections.size,
                     status = if (adherence > 70f) "Pass" else "Fail",
-                    outletId = selectedOutlet?.id ?: "unknown",
-                    outletName = selectedOutlet?.outlet_name ?: "unknown"
+                    outletId = outletId,
+                    outletName = selectedOutlet?.outlet_name ?: "unknown",
+                    uid = CurrentUser.uid,
+                    merchandiserId = CurrentUser.merchandiserId,
+                    auditId = CurrentUser.auditIdFor(outletId)
                 )
-                database.child("audits").push().setValue(audit).addOnCompleteListener {
-                    isUploading = false
-                    onBackToDashboard()
-                }
+                // Queued on the phone; uploads now or when the connection returns (no waiting offline)
+                OfflineSync.submit(context, "audits", audit)
+                onBackToDashboard()
             },
             containerColor = AppCoral,
             enabled = !isUploading

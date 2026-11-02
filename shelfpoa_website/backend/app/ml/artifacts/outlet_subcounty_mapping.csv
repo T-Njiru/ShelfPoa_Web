@@ -1,0 +1,83 @@
+chain,branch,area_raw,sub_county,confidence
+Carrefour,Junction,Ngong Road,DAGORETTI,high
+Carrefour,Two Rivers,Limuru Road,WESTLANDS,medium
+Carrefour,Garden City,Thika Road,KASARANI,medium
+Carrefour,Sarit,Westlands,WESTLANDS,high
+Carrefour,TRM,Thika Road,KASARANI,medium
+Carrefour,Galleria,Karen/Langata Road,LANG'ATA,high
+Carrefour,Village Market,Gigiri,WESTLANDS,high
+Carrefour,Mega,Westlands,WESTLANDS,high
+Carrefour,Southfield,South C,LANG'ATA,medium
+Carrefour,The Hub,Karen,LANG'ATA,high
+Naivas,Westlands,Westlands,WESTLANDS,high
+Naivas,Moi Avenue,CBD,STAREHE,high
+Naivas,Capital Centre,Mombasa Road,MAKADARA,medium
+Naivas,South C,South C,LANG'ATA,medium
+Naivas,Mountain Mall,Thika Road,KASARANI,medium
+Naivas,Buruburu,Buruburu,EMBAKASI,medium
+Naivas,Umoja,Umoja,EMBAKASI,high
+Naivas,Kasarani,Kasarani,KASARANI,high
+Naivas,Ruaraka,Ruaraka,KASARANI,medium
+Naivas,Eastgate,Eastlands,EMBAKASI,low
+Naivas,Komarock,Komarock,EMBAKASI,medium
+Naivas,Ronald Ngala,CBD,STAREHE,high
+Naivas,Greenhouse,Adams Arcade area,DAGORETTI,medium
+Naivas,Utawala,Utawala,EMBAKASI,high
+Naivas,Langata,Langata,LANG'ATA,high
+Naivas,Kilimani,Kilimani,DAGORETTI,high
+Naivas,Prestige,Ngong Road,DAGORETTI,medium
+Naivas,Lavington,Lavington,DAGORETTI,high
+Naivas,Aga Khan Walk,CBD,STAREHE,high
+Naivas,Muindi Mbingu,CBD,STAREHE,high
+Naivas,Greenspan,Donholm,EMBAKASI,high
+Naivas,Embakasi,Embakasi,EMBAKASI,high
+Naivas,Embakasi Nyayo,Embakasi,EMBAKASI,high
+Naivas,Kangemi,Kangemi,WESTLANDS,high
+Naivas,Mountain View,Mountain View,WESTLANDS,medium
+Naivas,Kahawa West,Kahawa West,KASARANI,medium
+Naivas,Githurai 45,Githurai,KASARANI,medium
+Naivas,Githurai 44,Githurai,KASARANI,medium
+Naivas,Riruta,Riruta,DAGORETTI,high
+Naivas,Gateway Mall,Syokimau,,excluded - Machakos County
+Naivas,Airport View,Embakasi/Syokimau area,EMBAKASI,low
+Naivas,Tassia,Tassia,EMBAKASI,high
+Naivas,Saika,Saika,EMBAKASI,medium
+Naivas,Qwetu,Riverside,WESTLANDS,medium
+Naivas,Waterfront,Karen,LANG'ATA,high
+Naivas,Imara,Imara Daima,EMBAKASI,high
+Naivas,Spur Mall,Kikuyu area,,excluded - Kiambu County
+Quickmart,Westlands,Westlands,WESTLANDS,high
+Quickmart,Kilimani,Kilimani,DAGORETTI,high
+Quickmart,Lavington,Lavington,DAGORETTI,high
+Quickmart,Chaka,Kilimani/Hurlingham,DAGORETTI,medium
+Quickmart,Tom Mboya,CBD,STAREHE,high
+Quickmart,Ruai,Ruai,NJIRU,high
+Quickmart,Utawala Mega,Utawala,EMBAKASI,high
+Quickmart,Utawala Express,Utawala,EMBAKASI,high
+Quickmart,OTC,CBD,STAREHE,high
+Quickmart,Kiambu Road,Kiambu Road,WESTLANDS,low
+Chandarana Foodplus,Yaya,Kilimani,DAGORETTI,high
+Chandarana Foodplus,Riverside,Riverside,WESTLANDS,medium
+Chandarana Foodplus,Ngara,Ngara,STAREHE,high
+Chandarana Foodplus,Highridge,Highridge,WESTLANDS,high
+Chandarana Foodplus,The Well,Karen,LANG'ATA,high
+Chandarana Foodplus,Rosslyn,Rosslyn,WESTLANDS,high
+Chandarana Foodplus,Ridgeways,Ridgeways,WESTLANDS,medium
+Chandarana Foodplus,Adlife Plaza,Kilimani,DAGORETTI,high
+Cleanshelf,K-Mall,Lusaka Road,STAREHE,low
+Cleanshelf,Langata,Langata,LANG'ATA,high
+Cleanshelf,Shujaa Mall,Nairobi,MAKADARA,low
+Cleanshelf,Rongai,Rongai,,excluded - Kajiado County
+Cleanshelf,Rongai Freshmarket,Rongai,,excluded - Kajiado County
+Cleanshelf,Qwetu Riverside,Riverside,WESTLANDS,medium
+Cleanshelf,Covo-Lavington,Lavington,DAGORETTI,high
+Cleanshelf,Green Park,Nairobi,STAREHE,low
+Cleanshelf,Kahawa West,Kahawa West,KASARANI,medium
+Cleanshelf,Ruaka,Ruaka,,excluded - Kiambu County
+Cleanshelf,South B,South B,MAKADARA,low
+Cleanshelf,Wendani,Wendani,,excluded - Kiambu County
+Cleanshelf,Ngong,Ngong,,excluded - Kajiado County
+Magunas,Utawala,Utawala,EMBAKASI,high
+Magunas,Pangani,Pangani,STAREHE,medium
+AFCOS,Memorial,Nairobi,STAREHE,low
+AFCOS,Karen,Karen,LANG'ATA,high

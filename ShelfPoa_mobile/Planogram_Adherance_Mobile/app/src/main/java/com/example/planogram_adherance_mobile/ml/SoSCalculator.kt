@@ -3,46 +3,41 @@ package com.example.planogram_adherance_mobile.ml
 object SoSCalculator {
 
     /**
-     * Calculates Share of Shelf based on Area.
-     * Your Brand Area / (Your Brand Area + Competitor Area)
+     * Single KPI pass mark (%), used by the screen and the saved status.
+     * TODO: confirm the source of this target (e.g. Flora Food Group) for the report.
+     */
+    const val PASS_THRESHOLD = 20f
+
+    /**
+     * Share of Shelf by AREA (the reported KPI):
+     * Blueband box area / total detected box area x 100.
+     * Any class other than "OTHERS" counts as Blueband.
      */
     fun calculate(detections: List<Detection>): Float {
         if (detections.isEmpty()) return 0f
 
-        var yourBrandArea = 0f
-        var totalCategoryArea = 0f
+        var bluebandArea = 0f
+        var totalArea = 0f
 
         detections.forEach { detection ->
             val area = detection.box.width * detection.box.height
-
-            // Accumulate Total Category (everything the model saw)
-            totalCategoryArea += area
-
-            // Accumulate Your Brand (anything not labeled OTHERS)
-            if (detection.className != "OTHERS") {
-                yourBrandArea += area
-            }
+            totalArea += area
+            if (detection.className != "OTHERS") bluebandArea += area
         }
 
-        if (totalCategoryArea == 0f) return 0f
-
-        val sosPercentage = (yourBrandArea / totalCategoryArea) * 100f
-        return sosPercentage.coerceIn(0f, 100f)
+        if (totalArea == 0f) return 0f
+        return ((bluebandArea / totalArea) * 100f).coerceIn(0f, 100f)
     }
 
     /**
-     * Alternative: Calculate by SKU count (Facings)
-     * Useful if boxes are overlapping or sizes are inconsistent.
+     * Alternative: share by FACINGS (Blueband facings / all detected facings).
+     * Not the reported KPI; kept for comparison only.
      */
     fun calculateByCount(detections: List<Detection>): Float {
         if (detections.isEmpty()) return 0f
-
-        val totalCount = detections.size
-        val yourBrandCount = detections.count { it.className != "OTHERS" }
-
-        return (yourBrandCount.toFloat() / totalCount.toFloat()) * 100f
+        val bluebandCount = detections.count { it.className != "OTHERS" }
+        return (bluebandCount.toFloat() / detections.size.toFloat()) * 100f
     }
 
-    // Set your KPI target here (e.g., 40% Share of Shelf is a Pass)
-    fun isPass(score: Float): Boolean = score >= 40f
+    fun isPass(score: Float): Boolean = score >= PASS_THRESHOLD
 }

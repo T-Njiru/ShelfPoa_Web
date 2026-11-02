@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Native controls follow the dark theme (dropdown lists, scrollbars, date pickers). */
+:root { color-scheme: dark; }
+
+body { font-family: "Inter", sans-serif; background-color: #2b2a33; color: #ffffff; }
+
+/* Safety net: a form control always has a readable foreground/background pair,
+   even before any utility class (bg-card, bg-field…) is applied to it.
+   Utilities still win because this sits in the base layer. */
+@layer base {
+  input, select, textarea { background-color: #38373f; color: #ffffff; font-family: inherit; }
+  button { font-family: inherit; }
+  option { background-color: #38373f; color: #ffffff; }
+  ::placeholder { color: #a8a6ad; opacity: 1; }
+}

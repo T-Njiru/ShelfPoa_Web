@@ -1,0 +1,163 @@
+antecedents,consequents,support,confidence,lift
+"BB ORI 500g, Wheat Flour 2kg",Eggs Tray (6pc),0.011,0.559,5.285
+"BB VANILLA 500g, Baking Powder 100g, White Sugar 1kg",Wheat Flour 2kg,0.009,0.811,5.227
+"BB VANILLA 500g, Eggs Tray (6pc)","Wheat Flour 2kg, White Sugar 1kg",0.014,0.492,5.206
+"BB VANILLA 500g, Eggs Tray (6pc), White Sugar 1kg",Wheat Flour 2kg,0.014,0.791,5.102
+"BB ORI 500g, Eggs Tray (6pc)",Wheat Flour 2kg,0.011,0.79,5.097
+"BB VANILLA 500g, Wheat Flour 2kg, White Sugar 1kg",Eggs Tray (6pc),0.014,0.536,5.066
+"BB VANILLA 500g, Wheat Flour 2kg","Eggs Tray (6pc), White Sugar 1kg",0.014,0.325,5.021
+"Eggs Tray (6pc), White Sugar 1kg","BB VANILLA 500g, Wheat Flour 2kg",0.014,0.21,5.021
+"BB VANILLA 500g, Eggs Tray (6pc)",Wheat Flour 2kg,0.021,0.773,4.987
+"BB CHOCO 250g, Eggs Tray (6pc)",Wheat Flour 2kg,0.008,0.772,4.976
+"BB VANILLA 500g, Baking Powder 100g",Wheat Flour 2kg,0.015,0.771,4.973
+"BB VANILLA 500g, Wheat Flour 2kg",Baking Powder 100g,0.015,0.363,4.944
+Baking Powder 100g,"BB VANILLA 500g, Wheat Flour 2kg",0.015,0.207,4.944
+"BB VANILLA 500g, Wheat Flour 2kg","Baking Powder 100g, White Sugar 1kg",0.009,0.213,4.928
+"Baking Powder 100g, White Sugar 1kg","BB VANILLA 500g, Wheat Flour 2kg",0.009,0.206,4.928
+"BB CHOCO 250g, Wheat Flour 2kg",Eggs Tray (6pc),0.008,0.519,4.899
+"BB VANILLA 500g, White Sugar 1kg","Eggs Tray (6pc), Wheat Flour 2kg",0.014,0.383,4.859
+"Eggs Tray (6pc), Wheat Flour 2kg","BB VANILLA 500g, White Sugar 1kg",0.014,0.172,4.859
+Eggs Tray (6pc),"BB VANILLA 500g, Wheat Flour 2kg",0.021,0.202,4.819
+"BB VANILLA 500g, Wheat Flour 2kg",Eggs Tray (6pc),0.021,0.51,4.819
+"BB ORI 250g, Eggs Tray (6pc)",Wheat Flour 2kg,0.01,0.745,4.806
+"BB VANILLA 500g, Wheat Flour 2kg, White Sugar 1kg",Baking Powder 100g,0.009,0.352,4.8
+"BB VANILLA 500g, Baking Powder 100g","Wheat Flour 2kg, White Sugar 1kg",0.009,0.453,4.794
+"BB VANILLA 1Kg, Eggs Tray (6pc)",Wheat Flour 2kg,0.01,0.737,4.753
+"BB VANILLA 500g, Eggs Tray (6pc)",Baking Powder 100g,0.009,0.341,4.655
+"BB VANILLA 500g, White Sugar 1kg","Baking Powder 100g, Wheat Flour 2kg",0.009,0.251,4.609
+"Baking Powder 100g, Wheat Flour 2kg","BB VANILLA 500g, White Sugar 1kg",0.009,0.164,4.609
+"BB VANILLA 500g, White Sugar 1kg",Wheat Flour 2kg,0.025,0.714,4.601
+Wheat Flour 2kg,"BB VANILLA 500g, White Sugar 1kg",0.025,0.163,4.601
+Eggs Tray (6pc),"BB VANILLA 500g, White Sugar 1kg",0.017,0.162,4.569
+"BB VANILLA 500g, White Sugar 1kg",Eggs Tray (6pc),0.017,0.484,4.569
+"BB ORI 250g, Wheat Flour 2kg",Eggs Tray (6pc),0.01,0.48,4.535
+"BB VANILLA 500g, Baking Powder 100g",Eggs Tray (6pc),0.009,0.479,4.524
+"BB VANILLA 1Kg, White Sugar 1kg",Wheat Flour 2kg,0.013,0.694,4.477
+"BB VANILLA 1Kg, Wheat Flour 2kg",Eggs Tray (6pc),0.01,0.464,4.382
+"BB VANILLA 500g, White Sugar 1kg",Baking Powder 100g,0.011,0.31,4.225
+Baking Powder 100g,"BB VANILLA 500g, White Sugar 1kg",0.011,0.15,4.225
+"BB VANILLA 1Kg, White Sugar 1kg",Eggs Tray (6pc),0.008,0.424,4.002
+BB VANILLA 1Kg,"Wheat Flour 2kg, White Sugar 1kg",0.013,0.344,3.639
+BB VANILLA 500g,"Eggs Tray (6pc), Wheat Flour 2kg, White Sugar 1kg",0.014,0.173,3.558
+"Eggs Tray (6pc), Wheat Flour 2kg, White Sugar 1kg",BB VANILLA 500g,0.014,0.28,3.558
+BB VANILLA 500g,"Baking Powder 100g, Wheat Flour 2kg",0.015,0.193,3.541
+"Baking Powder 100g, Wheat Flour 2kg",BB VANILLA 500g,0.015,0.278,3.541
+"Baking Powder 100g, Wheat Flour 2kg, White Sugar 1kg",BB VANILLA 500g,0.009,0.272,3.465
+BB VANILLA 1Kg,Wheat Flour 2kg,0.021,0.537,3.461
+BB VANILLA 500g,"Eggs Tray (6pc), Wheat Flour 2kg",0.021,0.271,3.447
+"Eggs Tray (6pc), Wheat Flour 2kg",BB VANILLA 500g,0.021,0.271,3.447
+BB VANILLA 500g,Wheat Flour 2kg,0.042,0.532,3.433
+Wheat Flour 2kg,BB VANILLA 500g,0.042,0.27,3.433
+BB VANILLA 1Kg,Baking Powder 100g,0.01,0.251,3.424
+Baking Powder 100g,BB VANILLA 500g,0.02,0.268,3.413
+BB VANILLA 500g,Baking Powder 100g,0.02,0.25,3.413
+"Wheat Flour 2kg, White Sugar 1kg",BB VANILLA 500g,0.025,0.268,3.408
+BB VANILLA 500g,"Wheat Flour 2kg, White Sugar 1kg",0.025,0.322,3.408
+BB VANILLA 500g,"Eggs Tray (6pc), White Sugar 1kg",0.017,0.218,3.378
+"Eggs Tray (6pc), White Sugar 1kg",BB VANILLA 500g,0.017,0.265,3.378
+"Baking Powder 100g, Eggs Tray (6pc)",BB VANILLA 500g,0.009,0.264,3.36
+BB VANILLA 500g,Eggs Tray (6pc),0.028,0.351,3.317
+Eggs Tray (6pc),BB VANILLA 500g,0.028,0.261,3.317
+BB VANILLA 1Kg,"Eggs Tray (6pc), White Sugar 1kg",0.008,0.21,3.247
+"Baking Powder 100g, White Sugar 1kg",BB VANILLA 500g,0.011,0.254,3.237
+BB VANILLA 1Kg,Eggs Tray (6pc),0.013,0.338,3.191
+BB VANILLA 1Kg,"Eggs Tray (6pc), Wheat Flour 2kg",0.01,0.249,3.161
+"BB VANILLA 500g, White Bread Loaf 400g",Wheat Flour 2kg,0.01,0.47,3.03
+"BB CHOCO 500g, Wheat Flour 2kg",White Sugar 1kg,0.011,0.658,2.797
+"BB ORI 500g, Eggs Tray (6pc)",White Sugar 1kg,0.009,0.647,2.748
+"BB VANILLA 1Kg, Wheat Flour 2kg",White Sugar 1kg,0.013,0.641,2.724
+"BB ORI 500g, Wheat Flour 2kg",White Sugar 1kg,0.013,0.64,2.719
+"BB VANILLA 500g, Eggs Tray (6pc), Wheat Flour 2kg",White Sugar 1kg,0.014,0.637,2.706
+"BB VANILLA 500g, Eggs Tray (6pc)",White Sugar 1kg,0.017,0.622,2.645
+"BB VANILLA 1Kg, Eggs Tray (6pc)",White Sugar 1kg,0.008,0.622,2.642
+"BB ORI 250g, Wheat Flour 2kg",White Sugar 1kg,0.013,0.62,2.635
+"BB CHOCO 250g, Wheat Flour 2kg",White Sugar 1kg,0.01,0.619,2.631
+"BB ORI 250g, Eggs Tray (6pc)",White Sugar 1kg,0.008,0.609,2.587
+"BB VANILLA 500g, Wheat Flour 2kg",White Sugar 1kg,0.025,0.606,2.573
+"BB ORI 1Kg, Wheat Flour 2kg",White Sugar 1kg,0.009,0.603,2.564
+"Wheat Flour 2kg, White Bread Loaf 400g",BB VANILLA 500g,0.01,0.197,2.502
+"BB VANILLA 500g, Baking Powder 100g, Wheat Flour 2kg",White Sugar 1kg,0.009,0.588,2.498
+"BB ORI 250g, White Sugar 1kg",Wheat Flour 2kg,0.013,0.378,2.438
+"BB ORI 500g, White Sugar 1kg",Eggs Tray (6pc),0.009,0.255,2.407
+"BB VANILLA 500g, Baking Powder 100g",White Sugar 1kg,0.011,0.559,2.377
+"BB ORI 1Kg, White Sugar 1kg",Wheat Flour 2kg,0.009,0.362,2.337
+"BB ORI 250g, White Sugar 1kg",Cocoa/Hot Chocolate Powder 400g,0.009,0.254,2.302
+"BB ORI 500g, White Sugar 1kg",Wheat Flour 2kg,0.013,0.356,2.296
+"BB ORI 250g, White Sugar 1kg",Eggs Tray (6pc),0.008,0.239,2.258
+"BB CHOCO 250g, White Sugar 1kg",Wheat Flour 2kg,0.01,0.349,2.252
+"BB ORI 500g, White Sugar 1kg",Cocoa/Hot Chocolate Powder 400g,0.008,0.238,2.162
+"BB S4B 1Kg, White Bread Loaf 400g",Jam 400g,0.011,0.506,2.128
+"BB CHOCO 500g, White Sugar 1kg",Ketepa Tea Leaves 100g,0.009,0.262,2.126
+"BB CHOCO 500g, White Sugar 1kg",Wheat Flour 2kg,0.011,0.328,2.117
+BB VANILLA 1Kg,White Sugar 1kg,0.019,0.496,2.106
+"BB ORI 250g, Cocoa/Hot Chocolate Powder 400g",White Sugar 1kg,0.009,0.495,2.104
+"BB CHOCO 250g, White Bread Loaf 400g",Fresh Milk 500ml,0.01,0.272,2.055
+"BB CHOCO 500g, Ketepa Tea Leaves 100g",White Sugar 1kg,0.009,0.484,2.055
+"BB S4B 500g, Fresh Milk 500ml",White Bread Loaf 400g,0.008,0.7,2.04
+"BB ORI 250g, Jam 400g",White Bread Loaf 400g,0.026,0.695,2.024
+"BB S4B 500g, White Bread Loaf 400g",Fresh Milk 500ml,0.008,0.265,2.001
+"BB S4B 500g, Jam 400g",White Bread Loaf 400g,0.013,0.679,1.98
+"BB ORI 250g, White Sugar 1kg",Ketepa Tea Leaves 100g,0.008,0.244,1.979
+"BB ORI 250g, White Bread Loaf 400g",Jam 400g,0.026,0.463,1.949
+"BB ORI 500g, Jam 400g",White Bread Loaf 400g,0.027,0.668,1.947
+"BB ORI 500g, White Bread Loaf 400g",Jam 400g,0.027,0.462,1.942
+"BB S4B 1Kg, Jam 400g",White Bread Loaf 400g,0.011,0.663,1.933
+"BB CHOCO 250g, Fresh Milk 500ml",White Bread Loaf 400g,0.01,0.663,1.932
+"BB CHOCO 250g, White Bread Loaf 400g",Jam 400g,0.017,0.458,1.928
+"BB ORI 1Kg, White Bread Loaf 400g",Jam 400g,0.017,0.458,1.927
+"BB ORI 250g, Jam 400g",Fresh Milk 500ml,0.01,0.255,1.927
+BB VANILLA 500g,White Sugar 1kg,0.036,0.452,1.92
+White Sugar 1kg,BB VANILLA 500g,0.036,0.151,1.92
+"BB CHOCO 500g, Jam 400g",White Bread Loaf 400g,0.017,0.647,1.884
+"BB ORI 1Kg, Jam 400g",White Bread Loaf 400g,0.017,0.646,1.884
+"BB ORI 250g, White Bread Loaf 400g",Fresh Milk 500ml,0.014,0.248,1.873
+"BB ORI 250g, Ketepa Tea Leaves 100g",White Sugar 1kg,0.008,0.441,1.872
+"BB ORI 100g, Jam 400g",White Bread Loaf 400g,0.017,0.64,1.866
+"BB ORI 100g, White Bread Loaf 400g",Fresh Milk 500ml,0.01,0.247,1.865
+"BB CHOCO 500g, Fresh Milk 500ml",White Bread Loaf 400g,0.01,0.639,1.862
+"BB ORI 500g, White Sugar 1kg",Ketepa Tea Leaves 100g,0.008,0.229,1.856
+"BB ORI 100g, Fresh Milk 500ml",White Bread Loaf 400g,0.01,0.635,1.851
+"BB ORI 250g, Fresh Milk 500ml",White Bread Loaf 400g,0.014,0.635,1.851
+"BB ORI 500g, Ketepa Tea Leaves 100g",White Sugar 1kg,0.008,0.433,1.84
+"BB CHOCO 250g, Jam 400g",White Bread Loaf 400g,0.017,0.631,1.84
+"BB ORI 250g, Fresh Milk 500ml",Jam 400g,0.01,0.436,1.834
+"BB ORI 100g, White Bread Loaf 400g",Jam 400g,0.017,0.436,1.832
+"BB S4B 500g, White Bread Loaf 400g",Jam 400g,0.013,0.435,1.83
+"BB VANILLA 500g, Jam 400g",White Bread Loaf 400g,0.009,0.627,1.826
+"BB S4B 250g, White Bread Loaf 400g",Jam 400g,0.012,0.433,1.821
+"BB CHOCO 100g, Jam 400g",White Bread Loaf 400g,0.011,0.624,1.819
+"BB ORI 500g, Fresh Milk 500ml",Jam 400g,0.009,0.429,1.805
+"BB VANILLA 500g, White Bread Loaf 400g",White Sugar 1kg,0.009,0.422,1.792
+"BB S4B 250g, Jam 400g",White Bread Loaf 400g,0.012,0.614,1.79
+"BB CHOCO 500g, White Bread Loaf 400g",Fresh Milk 500ml,0.01,0.233,1.763
+"BB ORI 500g, Cocoa/Hot Chocolate Powder 400g",White Sugar 1kg,0.008,0.414,1.759
+"BB VANILLA 500g, White Bread Loaf 400g",Jam 400g,0.009,0.418,1.757
+"BB CHOCO 100g, White Bread Loaf 400g",Jam 400g,0.011,0.417,1.754
+"BB CHOCO 500g, White Bread Loaf 400g",Jam 400g,0.017,0.416,1.749
+"BB S4B 100g, White Bread Loaf 400g",Jam 400g,0.009,0.415,1.747
+"BB S4B 100g, Jam 400g",White Bread Loaf 400g,0.009,0.595,1.735
+"BB ORI 500g, Fresh Milk 500ml",White Bread Loaf 400g,0.013,0.594,1.732
+"BB ORI 500g, Jam 400g",Fresh Milk 500ml,0.009,0.228,1.72
+"BB ORI 1Kg, Fresh Milk 500ml",White Bread Loaf 400g,0.008,0.585,1.706
+"BB ORI 500g, White Bread Loaf 400g",Fresh Milk 500ml,0.013,0.218,1.647
+"BB ORI 1Kg, White Bread Loaf 400g",Fresh Milk 500ml,0.008,0.217,1.638
+BB S4B 1Kg,"Jam 400g, White Bread Loaf 400g",0.011,0.232,1.496
+BB S4B 1Kg,Jam 400g,0.016,0.349,1.47
+BB S4B 250g,Fresh Milk 500ml,0.013,0.193,1.455
+BB CHOCO 100g,Ketepa Tea Leaves 100g,0.012,0.167,1.359
+BB S4B 1Kg,White Bread Loaf 400g,0.021,0.458,1.335
+BB S4B 500g,White Bread Loaf 400g,0.031,0.457,1.331
+"Ketepa Tea Leaves 100g, White Sugar 1kg",BB CHOCO 500g,0.009,0.154,1.321
+BB S4B 1Kg,Fresh Milk 500ml,0.008,0.175,1.32
+BB S4B 500g,Fresh Milk 500ml,0.012,0.173,1.306
+"White Bread Loaf 400g, White Sugar 1kg",BB CHOCO 500g,0.012,0.15,1.288
+BB S4B 500g,"Jam 400g, White Bread Loaf 400g",0.013,0.199,1.283
+BB CHOCO 250g,Ketepa Tea Leaves 100g,0.017,0.158,1.281
+BB S4B 100g,Fresh Milk 500ml,0.008,0.168,1.27
+"BB CHOCO 500g, White Bread Loaf 400g",White Sugar 1kg,0.012,0.292,1.241
+BB CHOCO 500g,Ketepa Tea Leaves 100g,0.018,0.152,1.235
+BB S4B 250g,Jam 400g,0.02,0.293,1.233
+BB S4B 500g,Jam 400g,0.02,0.293,1.231
+BB S4B 100g,Jam 400g,0.014,0.291,1.223
+BB S4B 100g,White Bread Loaf 400g,0.021,0.417,1.215
+BB S4B 250g,White Bread Loaf 400g,0.028,0.416,1.213

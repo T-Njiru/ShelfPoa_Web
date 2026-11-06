@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { api } from "../services/api";
 import { downloadCsv, timeLabel } from "../lib/format";
 import { GhostButton, Pill, PrimaryButton, Tabs } from "../components/ui";
+import { matches, useSearch } from "../lib/search";
 
 const COLS = "grid-cols-[minmax(120px,1.1fr)_minmax(140px,1.4fr)_minmax(100px,1fr)_minmax(120px,1fr)_130px_150px] gap-x-4";
 const LIMIT = 50;
 
 export default function StockoutAlerts() {
+  const query = useSearch();
   const [alerts, setAlerts] = useState([]);
   const [tab, setTab] = useState("all");
   const [resolved, setResolved] = useState(() => new Set()); // local until a write endpoint exists
@@ -25,7 +27,9 @@ export default function StockoutAlerts() {
   const isOpen = (a) => state(a) !== "resolved";
 
   const openCount = alerts.filter(isOpen).length;
-  const visible = alerts.filter((a) => (tab === "open" ? isOpen(a) : tab === "resolved" ? !isOpen(a) : true));
+  const visible = alerts
+    .filter((a) => (tab === "open" ? isOpen(a) : tab === "resolved" ? !isOpen(a) : true))
+    .filter((a) => matches(query, a.sku, a.branch_name, a.reported_by));
 
   // The API returns at most LIMIT rows, so when we hit it the counts are "at least", not exact.
   const more = alerts.length >= LIMIT ? "+" : "";

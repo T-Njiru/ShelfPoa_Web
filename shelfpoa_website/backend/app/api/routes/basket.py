@@ -12,7 +12,7 @@ router = APIRouter(prefix="/api/basket", tags=["basket"])
 @router.get("/rules", response_model=list[AssociationRule])
 def list_rules(
     limit: int = Query(10, ge=1, le=100),
-    sku: str | None = Query(None, description="Filter by antecedent SKU, e.g. 'BB VANILLA 250g'"),
+    sku: str | None = Query(None, description="Filter by antecedent SKU, e.g. 'BB VANILLA 500g'"),
 ):
     if settings.ml_mode == "live" and registry.ready:
         return basket_service.get_rules(limit=limit, sku=sku)

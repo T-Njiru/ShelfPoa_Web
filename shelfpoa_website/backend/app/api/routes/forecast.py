@@ -14,7 +14,7 @@ router = APIRouter(prefix="/api/forecast", tags=["forecast"])
 def get_forecast(
     chain: str | None = Query(None),
     branch: str | None = Query(None),
-    sku: str | None = Query(None, description="e.g. 'BB VANILLA 250g'"),
+    sku: str | None = Query(None, description="e.g. 'BB VANILLA 500g'"),
 ):
     if settings.ml_mode == "live" and registry.ready:
         return forecast_service.forecast_next_week(chain=chain, branch=branch, sku=sku)

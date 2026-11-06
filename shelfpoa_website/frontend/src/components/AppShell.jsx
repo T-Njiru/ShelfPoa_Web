@@ -19,6 +19,7 @@ const NAV = [
   { to: "/recommendations", label: "Recommendations" },
   { to: "/recommendation-maker", label: "Recommendation maker" },
   { to: "/stockouts", label: "Stock-out alerts" },
+  { to: "/new-outlet", label: "New outlet planner" },
 ];
 
 // Sign out after IDLE_MINUTES without mouse / keyboard / touch activity.

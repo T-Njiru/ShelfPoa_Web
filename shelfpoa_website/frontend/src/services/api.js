@@ -1,8 +1,25 @@
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
+// Surfaces FastAPI's {"detail": "..."} message when there is one.
+async function failed(res, path) {
+  let detail = "";
+  try { detail = (await res.json()).detail; } catch { /* not JSON */ }
+  return new Error(typeof detail === "string" && detail ? detail : `Request to ${path} failed: ${res.status}`);
+}
+
 async function get(path) {
   const res = await fetch(`${BASE_URL}${path}`);
-  if (!res.ok) throw new Error(`Request to ${path} failed: ${res.status}`);
+  if (!res.ok) throw await failed(res, path);
+  return res.json();
+}
+
+async function post(path, body) {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw await failed(res, path);
   return res.json();
 }
 
@@ -46,6 +63,10 @@ export const api = {
   getStockoutAlerts: (limit = 10) => get(`/api/stockouts?limit=${limit}`),
   getMerchandiserPerformance: (limit = 8) => get(`/api/merchandisers/performance?limit=${limit}`),
   getOutlets: () => get(`/api/outlets`),
+  // New-outlet planner: demand per SKU for a site with no sales history + opening stock / facings
+  getNewOutletOptions: () => get(`/api/forecast/new-outlet/options`),
+  planNewOutlet: (body) => post(`/api/forecast/new-outlet`, body),
+  getLocationCatchment: (lat, lon) => get(`/api/forecast/new-outlet/location?lat=${lat}&lon=${lon}`),
   getShelfOpportunities: (limit = 3, kind) =>
     get(`/api/shelf/opportunities?limit=${limit}${kind ? `&kind=${kind}` : ""}`),
 };

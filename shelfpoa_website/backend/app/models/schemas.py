@@ -76,6 +76,7 @@ class WeeklyForecast(BaseModel):
     lag_1w: float
     rolling_mean_3w: float
     predicted_units_next_week: float
+    osa_last_week_pct: Optional[float] = None  # % of last week the SKU was on shelf (None: no shelf data)
 
 
 class PlannedPromo(BaseModel):

@@ -166,7 +166,13 @@ def forecast_next_week(chain: str | None = None, branch: str | None = None,
 
     out_cols = ["chain", "branch", "sub_county", "sku", "flavor", "pack_size_g",
                 "forecast_week_start", "lag_1w", "rolling_mean_3w", "predicted_units_next_week"]
-    return next_week[out_cols].round(2).to_dict(orient="records")
+    # Last week's on-shelf availability, so the dashboard can tell a demand rise from a rebound
+    # after a stock-out (low lag_1w because the SKU was off the shelf, not because demand fell).
+    if "osa_pct_lag_1w" in next_week:
+        next_week["osa_last_week_pct"] = next_week["osa_pct_lag_1w"]
+        out_cols.append("osa_last_week_pct")
+    rows = next_week[out_cols].round(2)
+    return rows.astype(object).where(rows.notna(), None).to_dict(orient="records")
 
 
 def next_week_frame(chain: str | None = None, branch: str | None = None,

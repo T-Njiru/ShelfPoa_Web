@@ -1,0 +1,117 @@
+{
+  "rows": 21375,
+  "outlets": 75,
+  "folds": 5,
+  "overall": {
+    "baseline": {
+      "outlet_MAE": 34.08428713689771,
+      "outlet_MAPE_pct": 17.227565129898238,
+      "outlet_corr": 0.8776687109328802,
+      "row_MAE": 3.9187277132725855
+    },
+    "+ catchment": {
+      "outlet_MAE": 29.056684968931627,
+      "outlet_MAPE_pct": 14.693185233782435,
+      "outlet_corr": 0.9252350787264021,
+      "row_MAE": 3.6831251140895644
+    }
+  },
+  "fold_wins_catchment": 4,
+  "per_fold": [
+    {
+      "fold": 1,
+      "model": "baseline",
+      "outlet_MAE": 43.8728,
+      "outlet_MAPE_pct": 21.0449,
+      "outlet_corr": 0.8905,
+      "row_MAE": 4.2908
+    },
+    {
+      "fold": 1,
+      "model": "+ catchment",
+      "outlet_MAE": 36.5119,
+      "outlet_MAPE_pct": 16.705,
+      "outlet_corr": 0.9669,
+      "row_MAE": 3.9237
+    },
+    {
+      "fold": 2,
+      "model": "baseline",
+      "outlet_MAE": 34.0241,
+      "outlet_MAPE_pct": 18.4441,
+      "outlet_corr": 0.8918,
+      "row_MAE": 3.7916
+    },
+    {
+      "fold": 2,
+      "model": "+ catchment",
+      "outlet_MAE": 28.6215,
+      "outlet_MAPE_pct": 13.6165,
+      "outlet_corr": 0.9076,
+      "row_MAE": 3.607
+    },
+    {
+      "fold": 3,
+      "model": "baseline",
+      "outlet_MAE": 40.3406,
+      "outlet_MAPE_pct": 18.5825,
+      "outlet_corr": 0.7789,
+      "row_MAE": 4.3231
+    },
+    {
+      "fold": 3,
+      "model": "+ catchment",
+      "outlet_MAE": 31.9801,
+      "outlet_MAPE_pct": 15.8284,
+      "outlet_corr": 0.9061,
+      "row_MAE": 3.9399
+    },
+    {
+      "fold": 4,
+      "model": "baseline",
+      "outlet_MAE": 27.2761,
+      "outlet_MAPE_pct": 14.1283,
+      "outlet_corr": 0.9046,
+      "row_MAE": 3.7547
+    },
+    {
+      "fold": 4,
+      "model": "+ catchment",
+      "outlet_MAE": 27.4666,
+      "outlet_MAPE_pct": 14.0276,
+      "outlet_corr": 0.9528,
+      "row_MAE": 3.5903
+    },
+    {
+      "fold": 5,
+      "model": "baseline",
+      "outlet_MAE": 24.9079,
+      "outlet_MAPE_pct": 13.9379,
+      "outlet_corr": 0.9406,
+      "row_MAE": 3.4336
+    },
+    {
+      "fold": 5,
+      "model": "+ catchment",
+      "outlet_MAE": 20.7034,
+      "outlet_MAPE_pct": 13.2885,
+      "outlet_corr": 0.9575,
+      "row_MAE": 3.3547
+    }
+  ],
+  "feature_importance": {
+    "chain": 0.30188998579978943,
+    "sku": 0.2130800038576126,
+    "flavor": 0.20979000627994537,
+    "dominant_income_segment": 0.061230000108480453,
+    "log_catchment": 0.05900999903678894,
+    "ses_index_0_100": 0.05390999838709831,
+    "frac_reopen_spike": 0.025469999760389328,
+    "built_growth_annual": 0.017559999600052834,
+    "pack_size_g": 0.016459999606013298,
+    "sub_county": 0.013079999946057796,
+    "mean_discount_pct": 0.012369999662041664,
+    "frac_school_closed": 0.008190000429749489,
+    "promo_days_in_week": 0.00795000046491623
+  }
+}

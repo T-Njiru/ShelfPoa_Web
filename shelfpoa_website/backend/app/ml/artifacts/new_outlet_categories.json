@@ -1,0 +1,162 @@
+{
+  "categories": {
+    "chain": [
+      "AFCOS",
+      "Carrefour",
+      "Chandarana Foodplus",
+      "Cleanshelf",
+      "Magunas",
+      "Naivas",
+      "Quickmart"
+    ],
+    "sub_county": [
+      "DAGORETTI",
+      "EMBAKASI",
+      "KASARANI",
+      "LANG'ATA",
+      "MAKADARA",
+      "NJIRU",
+      "STAREHE",
+      "WESTLANDS"
+    ],
+    "dominant_income_segment": [
+      "high",
+      "low",
+      "middle"
+    ],
+    "flavor": [
+      "CHOCO",
+      "ORI",
+      "S4B",
+      "VANILLA"
+    ],
+    "sku": [
+      "BB CHOCO 100g",
+      "BB CHOCO 1Kg",
+      "BB CHOCO 250g",
+      "BB CHOCO 500g",
+      "BB ORI 100g",
+      "BB ORI 1Kg",
+      "BB ORI 250g",
+      "BB ORI 500g",
+      "BB S4B 100g",
+      "BB S4B 1Kg",
+      "BB S4B 250g",
+      "BB S4B 500g",
+      "BB VANILLA 1Kg",
+      "BB VANILLA 250g",
+      "BB VANILLA 500g"
+    ]
+  },
+  "features": [
+    "chain",
+    "sub_county",
+    "dominant_income_segment",
+    "flavor",
+    "sku",
+    "ses_index_0_100",
+    "pack_size_g",
+    "promo_days_in_week",
+    "mean_discount_pct",
+    "frac_school_closed",
+    "frac_reopen_spike",
+    "log_catchment",
+    "built_growth_annual"
+  ],
+  "skus": [
+    {
+      "sku": "BB CHOCO 100g",
+      "flavor": "CHOCO",
+      "pack_size_g": 100
+    },
+    {
+      "sku": "BB CHOCO 1Kg",
+      "flavor": "CHOCO",
+      "pack_size_g": 1000
+    },
+    {
+      "sku": "BB CHOCO 250g",
+      "flavor": "CHOCO",
+      "pack_size_g": 250
+    },
+    {
+      "sku": "BB CHOCO 500g",
+      "flavor": "CHOCO",
+      "pack_size_g": 500
+    },
+    {
+      "sku": "BB ORI 100g",
+      "flavor": "ORI",
+      "pack_size_g": 100
+    },
+    {
+      "sku": "BB ORI 1Kg",
+      "flavor": "ORI",
+      "pack_size_g": 1000
+    },
+    {
+      "sku": "BB ORI 250g",
+      "flavor": "ORI",
+      "pack_size_g": 250
+    },
+    {
+      "sku": "BB ORI 500g",
+      "flavor": "ORI",
+      "pack_size_g": 500
+    },
+    {
+      "sku": "BB S4B 100g",
+      "flavor": "S4B",
+      "pack_size_g": 100
+    },
+    {
+      "sku": "BB S4B 1Kg",
+      "flavor": "S4B",
+      "pack_size_g": 1000
+    },
+    {
+      "sku": "BB S4B 250g",
+      "flavor": "S4B",
+      "pack_size_g": 250
+    },
+    {
+      "sku": "BB S4B 500g",
+      "flavor": "S4B",
+      "pack_size_g": 500
+    },
+    {
+      "sku": "BB VANILLA 1Kg",
+      "flavor": "VANILLA",
+      "pack_size_g": 1000
+    },
+    {
+      "sku": "BB VANILLA 250g",
+      "flavor": "VANILLA",
+      "pack_size_g": 250
+    },
+    {
+      "sku": "BB VANILLA 500g",
+      "flavor": "VANILLA",
+      "pack_size_g": 500
+    }
+  ],
+  "ses_by_sub_county": {
+    "LANG'ATA": 100.0,
+    "STAREHE": 56.7,
+    "KASARANI": 52.2,
+    "DAGORETTI": 32.8,
+    "WESTLANDS": 96.6,
+    "MAKADARA": 42.1,
+    "EMBAKASI": 48.7,
+    "NJIRU": 40.3
+  },
+  "default_income_segment_by_chain": {
+    "AFCOS": "high",
+    "Carrefour": "high",
+    "Chandarana Foodplus": "high",
+    "Cleanshelf": "high",
+    "Magunas": "high",
+    "Naivas": "high",
+    "Quickmart": "high"
+  }
+}

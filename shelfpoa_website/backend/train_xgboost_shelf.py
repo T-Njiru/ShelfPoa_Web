@@ -25,6 +25,13 @@ EVALUATION ADDED (for the report, Chapter 5.4.2) -- training and the saved model
   * chosen hyperparameters and number of trees for A and B
   * feature-importance chart (PNG, if matplotlib is installed)
   * everything also saved to model_evaluation_report.json
+
+CATCHMENT CHECK (added with resimulate_demand.py): if app\ml\artifacts\outlet_catchments.csv
+exists, an extra model "B + catchment" (B plus log_catchment and built_growth_annual) is trained
+the same way and scored on the same test weeks, for the report only. It is NOT saved: for outlets
+with sales history, the lags and branch already pin each outlet's level, so the satellite features
+add nothing here (they matter for outlets with NO history -> train_new_outlet_model.py).
+Set WEEKLY_USE_CATCHMENT = True to save B with them instead.
 """
 
 import json
@@ -34,13 +41,20 @@ import numpy as np
 import pandas as pd
 import xgboost as xgb
 
-from app.ml.demand_model import CATS, GROUP_KEYS, SHELF_FEATURES, _aggregate_to_weekly
+from app.ml.demand_model import (CATS, CATCHMENT_FEATURES, CATCHMENTS_PATH, GROUP_KEYS, SHELF_FEATURES,
+                                 _aggregate_to_weekly)
 from app.ml.registry import DIR as ART
 
 SEED = 42
 BASE_FEATURES = CATS + ["pack_size_g", "ses_index_0_100", "promo_days_in_week", "mean_discount_pct",
                         "frac_school_closed", "frac_reopen_spike", "lag_1w", "lag_2w", "rolling_mean_3w"]
+HAVE_CATCHMENT = CATCHMENTS_PATH.exists()
+WEEKLY_USE_CATCHMENT = False         # see docstring: no gain for outlets with history
+if HAVE_CATCHMENT and WEEKLY_USE_CATCHMENT:
+    BASE_FEATURES = BASE_FEATURES + CATCHMENT_FEATURES
 SHELF_MODEL_FEATURES = BASE_FEATURES + SHELF_FEATURES
+SHELF_PLUS_CATCHMENT = [f for f in SHELF_MODEL_FEATURES] + [f for f in CATCHMENT_FEATURES if f not in SHELF_MODEL_FEATURES]
+REPORT_CATCHMENT = HAVE_CATCHMENT and not WEEKLY_USE_CATCHMENT
 GRID = [dict(max_depth=4, learning_rate=0.05, subsample=0.8, colsample_bytree=0.8),
         dict(max_depth=6, learning_rate=0.05, subsample=0.8, colsample_bytree=0.8),
         dict(max_depth=6, learning_rate=0.1, subsample=0.9, colsample_bytree=0.9),
@@ -77,8 +91,10 @@ def build_weekly():
 # shelf, or better planogram compliance can never LOWER the forecast. Without this, a few
 # branch-SKUs gave nonsense what-ifs ("improve the shelf, lose sales"); with it, the
 # shelf-opportunity uplifts are always >= 0.
+# More people living around an outlet can't lower its forecast either.
 MONOTONE_UP = ["lag_1w", "lag_2w", "rolling_mean_3w",
-               "osa_pct_week", "osa_pct_lag_1w", "bb_share_pct_week", "planogram_pct_week"]
+               "osa_pct_week", "osa_pct_lag_1w", "bb_share_pct_week", "planogram_pct_week",
+               "log_catchment"]
 
 
 def fit(features, train, val):
@@ -141,11 +157,12 @@ def save_importance_chart(imp, path):
         return
     top = imp.head(15)[::-1]
     shelf = set(SHELF_FEATURES)
-    colors = ["#f4784e" if f in shelf else "#5b6b8c" for f in top.index]
+    catch = set(CATCHMENT_FEATURES)
+    colors = ["#f4784e" if f in shelf else "#3a9d6a" if f in catch else "#5b6b8c" for f in top.index]
     fig, ax = plt.subplots(figsize=(8, 5))
     ax.barh(top.index, top.values, color=colors)
     ax.set_xlabel("Importance (gain)")
-    ax.set_title("Model B feature importance (orange = shelf features)")
+    ax.set_title("Model B feature importance (orange = shelf, green = satellite catchment)")
     fig.tight_layout()
     fig.savefig(path, dpi=200)
     plt.close(fig)
@@ -175,6 +192,7 @@ def main():
 
     _, pa, model_a = fit(BASE_FEATURES, train, val)
     _, pb, model_b = fit(SHELF_MODEL_FEATURES, train, val)
+    model_bc = fit(SHELF_PLUS_CATCHMENT, train, val)[2] if REPORT_CATCHMENT else None
     trees_a, trees_b = model_a.best_iteration + 1, model_b.best_iteration + 1
     print(f"\nChosen hyperparameters  A: {pa} ({trees_a} trees)   B: {pb} ({trees_b} trees)")
 
@@ -189,6 +207,9 @@ def main():
         "Baseline: 3-week rolling mean -> observed sales": scores(test["rolling_mean_3w"], test["units_sold_week"]),
         "A sales only -> observed sales": scores(pred_a, test["units_sold_week"]),
         "B with shelf (actual OSA) -> observed sales": scores(pred_b_actual, test["units_sold_week"]),
+        **({"B + catchment (actual OSA) -> observed sales":
+            scores(np.expm1(model_bc.predict(test[SHELF_PLUS_CATCHMENT])), test["units_sold_week"])}
+           if REPORT_CATCHMENT else {}),
         "A sales only -> TRUE demand": scores(pred_a, test["true_demand_week"]),
         "B with shelf (OSA=100) -> TRUE demand": scores(pred_b_full, test["true_demand_week"]),
     }
@@ -218,6 +239,11 @@ def main():
         backup = ART / name.replace(".json", "_pre_shelf.json")
         if (ART / name).exists() and not backup.exists():
             shutil.copy(ART / name, backup)
+    if HAVE_CATCHMENT:
+        for name in ("demand_model_weekly.json", "training_categories.json", "model_evaluation_report.json"):
+            backup = ART / name.replace(".json", "_pre_catchment.json")
+            if (ART / name).exists() and not backup.exists():
+                shutil.copy(ART / name, backup)
     model_b.get_booster().save_model(str(ART / "demand_model_weekly.json"))
     with open(ART / "training_categories.json", "w") as f:
         json.dump(cats, f, indent=2)
@@ -235,6 +261,7 @@ def main():
         "cv_B": cv_b.round(4).to_dict(orient="index"),
         "feature_importance_B": imp.round(5).to_dict(),
         "shelf_feature_importance_share_pct": float(shelf_share),
+        "catchment_features_in_saved_model": CATCHMENT_FEATURES if WEEKLY_USE_CATCHMENT else [],
     }
     with open(ART / "model_evaluation_report.json", "w") as f:
         json.dump(full_report, f, indent=2, default=float)

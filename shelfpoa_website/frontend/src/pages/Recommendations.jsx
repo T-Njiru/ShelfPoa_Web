@@ -15,6 +15,12 @@ const TOP = 8;       // rows per section (and per shelf lever) on the "All" tab
 const PAGE = 20;     // "Show more" step on a section's own tab
 const REAL_SKUS = new Set(SKUS); // hides the two non-existent SKUs still in the simulated sales history
 const MIN_BASE = 5;  // a % change off fewer units than this is noise (1 -> 6 units = "+500%"), so it's hidden
+// Off the shelf 2+ days of last week (< 75%) and forecast above last week -> last week's sales were held
+// down by the stock-out, so the "rise" is the SKU recovering once restocked, not new demand.
+const REBOUND_OSA = 75;
+const isRebound = (f) =>
+  f.osa_last_week != null && f.osa_last_week < REBOUND_OSA &&
+  f.last_week_units != null && f.forecast_units_next_7d > f.last_week_units;
 
 const COLS = "grid-cols-[minmax(120px,1fr)_minmax(150px,1.3fr)_minmax(150px,1.2fr)_minmax(110px,0.8fr)_170px] gap-x-4";
 const SHELF_COLS = "grid-cols-[110px_minmax(150px,1.3fr)_minmax(120px,1fr)_minmax(160px,1.4fr)_170px] gap-x-4";
@@ -33,6 +39,7 @@ const RULE_SORTS = {
 const FORECAST_SORTS = {
   demand: { label: "Highest demand", fn: (a, b) => b.forecast_units_next_7d - a.forecast_units_next_7d },
   rise: { label: "Biggest rise", fn: (a, b) => (pctOf(b) ?? -1e9) - (pctOf(a) ?? -1e9) },
+  rebound: { label: "Rebounds after stock-out", fn: (a, b) => b.forecast_units_next_7d - a.forecast_units_next_7d },
   drop: { label: "Biggest drop", fn: (a, b) => (pctOf(a) ?? 1e9) - (pctOf(b) ?? 1e9) },
 };
 const SHELF_SORTS = {
@@ -51,7 +58,18 @@ const titleCase = (s = "") => s.toLowerCase().replace(/(^|[\s'-])\w/g, (c) => c.
 const ruleItems = (r) => [...r.antecedent, ...r.consequent];
 
 // Next week vs last week, colour-coded: green rise, red drop, grey roughly flat (within ±5%)
-function Change({ pct, lowVolume }) {
+function Change({ pct, lowVolume, osa, rebound }) {
+  if (rebound) {
+    return (
+      <span title={`On the shelf only ${osa}% of last week, so last week's sales were held down. The forecast assumes it is restocked.`}
+        className="inline-flex flex-col leading-tight">
+        <span className="inline-flex items-center gap-1 h-6 px-2 rounded-md text-[12px] font-semibold whitespace-nowrap bg-warn-bg text-warn">
+          ↺ Rebound after stock-out
+        </span>
+        <span className="text-[10px] text-muted mt-0.5">on shelf {osa}% of last week</span>
+      </span>
+    );
+  }
   if (lowVolume) return <span className="text-[11px] text-muted" title={`Fewer than ${MIN_BASE} units last week`}>low volume</span>;
   if (pct == null) return <span className="text-[12px] text-muted">—</span>;
   const cls = pct >= 5 ? "bg-ok-bg text-ok" : pct <= -5 ? "bg-bad-bg text-bad" : "bg-field text-muted";
@@ -142,8 +160,10 @@ export default function Recommendations() {
       forecasts
         .filter((f) => matches(query, f.sku, f.branch_name, f.sub_county))
         .filter((f) => tab !== "xgb" || ((!fcSku || f.sku === fcSku) && (!fcArea || f.sub_county === fcArea)))
-        // rise / drop rankings only make sense for SKUs that actually sell at the outlet
-        .filter((f) => tab !== "xgb" || fcSort === "demand" || pctOf(f) != null)
+        // rise / drop rankings only make sense for SKUs that actually sell at the outlet;
+        // stock-out rebounds get their own view instead of topping "Biggest rise"
+        .filter((f) => tab !== "xgb" || fcSort === "demand"
+          || (fcSort === "rebound" ? isRebound(f) : pctOf(f) != null && !isRebound(f)))
         .sort(FORECAST_SORTS[tab === "xgb" ? fcSort : "demand"].fn),
     [forecasts, query, tab, fcSku, fcArea, fcSort]
   );
@@ -170,9 +190,12 @@ export default function Recommendations() {
         outlet: f.branch_name,
         sku: f.sku,
         type: "restock",
-        source: `XGBoost — demand forecast, ${f.forecast_units_next_7d} units next week (${f.sku}${
-          f.change_pct != null ? `, ${f.change_pct > 0 ? "+" : ""}${f.change_pct}% vs last week` : ""
-        })`,
+        source: isRebound(f)
+          ? `XGBoost — ${f.sku} was on the shelf only ${f.osa_last_week}% of last week (${f.last_week_units} units sold); ` +
+            `~${f.forecast_units_next_7d} units/week expected once restocked`
+          : `XGBoost — demand forecast, ${f.forecast_units_next_7d} units next week (${f.sku}${
+              f.change_pct != null ? `, ${f.change_pct > 0 ? "+" : ""}${f.change_pct}% vs last week` : ""
+            })`,
       },
     });
   const sendRule = (r) =>
@@ -237,7 +260,7 @@ export default function Recommendations() {
             <div className="flex items-center gap-3 mb-3">
               <Select value={fcSku} onChange={setFcSku} options={[["", "All SKUs"], ...SKUS.map((s) => [s, s])]} />
               <Select value={fcArea} onChange={setFcArea} options={[["", "All sub-counties"], ...areas.map((a) => [a, titleCase(a)])]} />
-              <Select value={fcSort} onChange={setFcSort} options={Object.entries(FORECAST_SORTS).map(([k, v]) => [k, v.label])} className="w-[170px]" />
+              <Select value={fcSort} onChange={setFcSort} options={Object.entries(FORECAST_SORTS).map(([k, v]) => [k, v.label])} className="w-[220px]" />
               <span className="text-[11px] text-muted">{fcRows.length} outlet × SKU forecasts</span>
             </div>
           )}
@@ -261,7 +284,7 @@ export default function Recommendations() {
                   <span className="text-muted">{f.last_week_units ?? "—"} → </span>
                   <span className="font-semibold">{f.forecast_units_next_7d} units</span>
                 </span>
-                <div><Change pct={f.change_pct} lowVolume={f.last_week_units != null && f.last_week_units < MIN_BASE} /></div>
+                <div><Change pct={f.change_pct} osa={f.osa_last_week} rebound={isRebound(f)} lowVolume={f.last_week_units != null && f.last_week_units < MIN_BASE} /></div>
                 <div>
                   <PrimaryButton onClick={() => sendForecast(f)} className="h-[30px] w-full text-left">
                     Send recommendation

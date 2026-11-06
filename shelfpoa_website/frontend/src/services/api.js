@@ -25,6 +25,8 @@ function normaliseForecast(r) {
     // (A 3-week average is skewed by one-off spikes, e.g. a 79-unit week makes a normal week look like -26%.)
     last_week_units: lastWeek,
     change_pct: lastWeek ? Math.round((predicted / lastWeek - 1) * 100) : null,
+    // % of last week the SKU was on the shelf (null when the backend has no shelf data)
+    osa_last_week: r.osa_last_week_pct != null ? Math.round(Number(r.osa_last_week_pct)) : null,
   };
 }
 

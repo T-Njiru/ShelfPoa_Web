@@ -20,11 +20,17 @@ The forecast assumes the SKU is FULLY on shelf next week (osa_pct_week = 100 by 
 predicted_units_next_week = demand if the shelf is kept stocked -- not sales dragged down by
 last week's stock-outs. SOS and planogram are carried forward from the latest week.
 An older model without shelf features keeps working unchanged.
+
+CATCHMENT FEATURES (added with resimulate_demand.py): log_catchment (people living within ~2 km,
+WorldPop R2025A) and built_growth_annual (area building growth, Open Buildings 2016-2023) come
+from outlet_catchments.csv and are merged in per outlet. They let the model tell apart outlets
+in the same sub-county. A model trained without them ignores the extra columns.
 """
 
 import json
 from datetime import date, timedelta
 
+import numpy as np
 import pandas as pd
 
 from app.ml.registry import registry, DIR as REGISTRY_DIR
@@ -39,6 +45,8 @@ SALES_CSV_PATH = REGISTRY_DIR / "nairobi_sku_outlet_daily_sales_SHELF.csv"  # ob
 if not SALES_CSV_PATH.exists():
     SALES_CSV_PATH = REGISTRY_DIR / "nairobi_sku_outlet_daily_sales_EXTENDED.csv"
 SHELF_CSV_PATH = REGISTRY_DIR / "shelf_history_daily.csv"
+CATCHMENTS_PATH = REGISTRY_DIR / "outlet_catchments.csv"
+CATCHMENT_FEATURES = ["log_catchment", "built_growth_annual"]
 
 with open(CATEGORIES_PATH) as f:
     _category_reference = json.load(f)
@@ -69,6 +77,25 @@ def load_shelf_history() -> pd.DataFrame | None:
     if not SHELF_CSV_PATH.exists():
         return None
     return pd.read_csv(SHELF_CSV_PATH, parse_dates=["date"])
+
+
+def load_catchments() -> pd.DataFrame | None:
+    """One row per outlet: chain, branch, log_catchment, built_growth_annual (+ lat/lon, source).
+    Built offline from Google Earth Engine (Google_Earth_proposition sandbox / catchment_for_site.py).
+    None if the file is missing."""
+    if not CATCHMENTS_PATH.exists():
+        return None
+    c = pd.read_csv(CATCHMENTS_PATH)
+    c["log_catchment"] = np.log(c["catchment_pop_2026"])
+    return c
+
+
+def add_catchment_features(df: pd.DataFrame) -> pd.DataFrame:
+    """Merge CATCHMENT_FEATURES onto any frame with chain + branch. Shared by both models."""
+    c = load_catchments()
+    if c is None:
+        return df
+    return df.merge(c[["chain", "branch"] + CATCHMENT_FEATURES], on=["chain", "branch"], how="left")
 
 
 def weekly_shelf_features(shelf: pd.DataFrame, start: pd.Timestamp) -> pd.DataFrame:
@@ -125,7 +152,7 @@ def _aggregate_to_weekly(df: pd.DataFrame, shelf: pd.DataFrame | None = None) ->
 
     if shelf is not None:
         agg = agg.merge(weekly_shelf_features(shelf, start), on=GROUP_KEYS + ["week_idx"], how="left")
-    return agg
+    return add_catchment_features(agg)
 
 
 def forecast_next_week(chain: str | None = None, branch: str | None = None,

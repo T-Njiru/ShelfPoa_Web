@@ -1,0 +1,226 @@
+{
+  "dataset": {
+    "daily_rows": 150750,
+    "date_from": "2026-06-04",
+    "date_to": "2026-10-15",
+    "daily_columns": [
+      "date",
+      "chain",
+      "branch",
+      "sub_county",
+      "dominant_income_segment",
+      "ses_index_0_100",
+      "flavor",
+      "pack_size_g",
+      "sku",
+      "promo_flag",
+      "promo_type",
+      "discount_pct",
+      "units_sold",
+      "true_demand_units",
+      "week_idx"
+    ],
+    "unique_per_group_key": {
+      "chain": 7,
+      "branch": 69,
+      "sku": 15
+    },
+    "weekly_rows": 18000,
+    "weeks": 16,
+    "train_rows": 13500,
+    "val_rows": 2250,
+    "test_rows": 2250
+  },
+  "hyperparameters": {
+    "A": {
+      "max_depth": 6,
+      "learning_rate": 0.1,
+      "subsample": 0.9,
+      "colsample_bytree": 0.9,
+      "n_trees": 35
+    },
+    "B": {
+      "max_depth": 6,
+      "learning_rate": 0.05,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "n_trees": 127
+    }
+  },
+  "test_scores": {
+    "Baseline: last week's sales -> observed sales": {
+      "MAE": 4.464,
+      "RMSE": 6.13,
+      "R2": 0.689,
+      "WAPE_pct": 34.376,
+      "bias_pct": -2.337
+    },
+    "Baseline: 3-week rolling mean -> observed sales": {
+      "MAE": 3.777,
+      "RMSE": 5.232,
+      "R2": 0.774,
+      "WAPE_pct": 29.083,
+      "bias_pct": -1.135
+    },
+    "A sales only -> observed sales": {
+      "MAE": 3.644,
+      "RMSE": 5.15,
+      "R2": 0.781,
+      "WAPE_pct": 28.055,
+      "bias_pct": -10.232
+    },
+    "B with shelf (actual OSA) -> observed sales": {
+      "MAE": 3.215,
+      "RMSE": 4.38,
+      "R2": 0.841,
+      "WAPE_pct": 24.755,
+      "bias_pct": -6.413
+    },
+    "A sales only -> TRUE demand": {
+      "MAE": 3.689,
+      "RMSE": 5.205,
+      "R2": 0.787,
+      "WAPE_pct": 26.844,
+      "bias_pct": -15.173
+    },
+    "B with shelf (OSA=100) -> TRUE demand": {
+      "MAE": 3.358,
+      "RMSE": 4.56,
+      "R2": 0.836,
+      "WAPE_pct": 24.431,
+      "bias_pct": -6.878
+    }
+  },
+  "stockout_weeks_true_demand_MAE": {
+    "rows": 437,
+    "A": 3.689072393443546,
+    "B": 3.2992776261314374
+  },
+  "cv_A": {
+    "1": {
+      "MAE": 3.8527,
+      "RMSE": 5.5821,
+      "R2": 0.7578,
+      "WAPE_pct": 29.3827,
+      "bias_pct": -10.2349,
+      "train_weeks": 3,
+      "test_weeks": 3,
+      "test_rows": 3375
+    },
+    "2": {
+      "MAE": 3.9995,
+      "RMSE": 5.6497,
+      "R2": 0.7873,
+      "WAPE_pct": 28.038,
+      "bias_pct": -7.2779,
+      "train_weeks": 6,
+      "test_weeks": 2,
+      "test_rows": 2250
+    },
+    "3": {
+      "MAE": 5.358,
+      "RMSE": 7.9298,
+      "R2": 0.6912,
+      "WAPE_pct": 33.6756,
+      "bias_pct": -16.3528,
+      "train_weeks": 8,
+      "test_weeks": 2,
+      "test_rows": 2250
+    },
+    "4": {
+      "MAE": 3.3847,
+      "RMSE": 4.7177,
+      "R2": 0.8155,
+      "WAPE_pct": 26.1168,
+      "bias_pct": 1.9456,
+      "train_weeks": 10,
+      "test_weeks": 2,
+      "test_rows": 2250
+    },
+    "5": {
+      "MAE": 3.4699,
+      "RMSE": 4.9405,
+      "R2": 0.7958,
+      "WAPE_pct": 27.0814,
+      "bias_pct": -8.7722,
+      "train_weeks": 12,
+      "test_weeks": 2,
+      "test_rows": 2250
+    }
+  },
+  "cv_B": {
+    "1": {
+      "MAE": 3.446,
+      "RMSE": 4.8223,
+      "R2": 0.8193,
+      "WAPE_pct": 26.2812,
+      "bias_pct": -6.0693,
+      "train_weeks": 3,
+      "test_weeks": 3,
+      "test_rows": 3375
+    },
+    "2": {
+      "MAE": 3.508,
+      "RMSE": 4.8816,
+      "R2": 0.8412,
+      "WAPE_pct": 24.5925,
+      "bias_pct": -2.6728,
+      "train_weeks": 6,
+      "test_weeks": 2,
+      "test_rows": 2250
+    },
+    "3": {
+      "MAE": 4.9196,
+      "RMSE": 7.2499,
+      "R2": 0.7419,
+      "WAPE_pct": 30.9201,
+      "bias_pct": -14.7899,
+      "train_weeks": 8,
+      "test_weeks": 2,
+      "test_rows": 2250
+    },
+    "4": {
+      "MAE": 3.2221,
+      "RMSE": 4.4409,
+      "R2": 0.8365,
+      "WAPE_pct": 24.8621,
+      "bias_pct": 5.2863,
+      "train_weeks": 10,
+      "test_weeks": 2,
+      "test_rows": 2250
+    },
+    "5": {
+      "MAE": 3.0562,
+      "RMSE": 4.2775,
+      "R2": 0.8469,
+      "WAPE_pct": 23.8522,
+      "bias_pct": -5.6886,
+      "train_weeks": 12,
+      "test_weeks": 2,
+      "test_rows": 2250
+    }
+  },
+  "feature_importance_B": {
+    "rolling_mean_3w": 0.4713299870491028,
+    "lag_1w": 0.224140003323555,
+    "lag_2w": 0.18509000539779663,
+    "osa_pct_week": 0.047269999980926514,
+    "frac_reopen_spike": 0.009279999881982803,
+    "chain": 0.009279999881982803,
+    "branch": 0.009209999814629555,
+    "sku": 0.008510000072419643,
+    "flavor": 0.006800000090152025,
+    "frac_school_closed": 0.004879999905824661,
+    "mean_discount_pct": 0.004040000028908253,
+    "promo_days_in_week": 0.002940000034868717,
+    "pack_size_g": 0.0029200001154094934,
+    "sub_county": 0.0028899998869746923,
+    "planogram_pct_week": 0.002309999894350767,
+    "dominant_promo_type": 0.002259999979287386,
+    "dominant_income_segment": 0.0019099999917671084,
+    "bb_share_pct_week": 0.0018700000364333391,
+    "ses_index_0_100": 0.0015800000401213765,
+    "osa_pct_lag_1w": 0.001500000013038516
+  },
+  "shelf_feature_importance_share_pct": 5.295600891113281
+}

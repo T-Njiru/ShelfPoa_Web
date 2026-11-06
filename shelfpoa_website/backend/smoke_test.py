@@ -71,6 +71,26 @@ check("forecast/with-promo: sane uplift vs baseline", "POST", "/api/forecast/wit
 check("forecast/with-promo: bad body -> 422", "POST", "/api/forecast/with-promo" + Q, expect=422,
       json={"promo_days_in_week": "seven"})
 
+# --- new outlet (satellite catchment) ---
+def _bigger_catchment_sells_more(_):
+    def total(pop):
+        return requests.post(BASE + "/api/forecast/new-outlet", timeout=30, json={
+            "chain": "Naivas", "sub_county": "EMBAKASI", "catchment_pop_2026": pop,
+            "built_growth_annual": 0.03}).json()["total_units_per_week"]
+    small, big = total(20000), total(100000)
+    return None if big > small > 0 else f"20k -> {small}, 100k -> {big}"
+
+
+check("new-outlet: existing outlet looked up", "POST", "/api/forecast/new-outlet",
+      json={"chain": "Naivas", "branch": "Umoja"},
+      validate=lambda d: None if d["total_units_per_week"] > 0 and len(d["skus"]) == 15 else f"got {d}")
+check("new-outlet: more people nearby -> more demand", "POST", "/api/forecast/new-outlet",
+      json={"chain": "Naivas", "sub_county": "EMBAKASI", "catchment_pop_2026": 20000,
+            "built_growth_annual": 0.03}, validate=_bigger_catchment_sells_more)
+check("new-outlet: unknown sub-county -> 422", "POST", "/api/forecast/new-outlet", expect=422,
+      json={"chain": "Naivas", "sub_county": "NOWHERE", "catchment_pop_2026": 20000,
+            "built_growth_annual": 0.03})
+
 # --- basket ---
 check("basket/rules: default", "GET", "/api/basket/rules",
       validate=lambda d: None if len(d) > 0 and "lift" in d[0] else f"got {d}")

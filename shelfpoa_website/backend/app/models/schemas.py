@@ -83,3 +83,35 @@ class PlannedPromo(BaseModel):
     mean_discount_pct: float = 0.0
     dominant_promo_type: str = "none"  # price_discount | multi_buy | bundle_with_complement | display_feature | none
 
+
+class NewOutletRequest(BaseModel):
+    """A site with no sales history. Either chain + branch of an outlet already on file
+    (catchment looked up), or chain + sub_county + the site's satellite catchment
+    (from scripts/catchment_for_site.py)."""
+    chain: str
+    sub_county: Optional[str] = None             # e.g. "EMBAKASI"
+    branch: Optional[str] = None
+    catchment_pop_2026: Optional[float] = None   # people within ~2 km, distance-decayed
+    built_growth_annual: Optional[float] = None  # e.g. 0.035 = 3.5% a year
+    dominant_income_segment: Optional[str] = None  # high | middle | low; defaults to the chain's usual
+    promo_days_in_week: int = 0
+    mean_discount_pct: float = 0.0
+
+
+class NewOutletSkuForecast(BaseModel):
+    sku: str
+    flavor: str
+    pack_size_g: int
+    predicted_units_per_week: float
+
+
+class NewOutletForecast(BaseModel):
+    chain: str
+    branch: Optional[str] = None
+    sub_county: str
+    dominant_income_segment: str
+    catchment_pop_2026: float
+    built_growth_annual: float
+    total_units_per_week: float
+    skus: list[NewOutletSkuForecast]
+

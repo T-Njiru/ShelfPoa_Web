@@ -164,3 +164,17 @@ def get_forecast_with_promo(chain=None, branch=None, sku=None, promo=None):
     return [dict(row, predicted_units_next_week=round(row["predicted_units_next_week"] * 1.3, 2))
             for row in base]
 
+
+def get_new_outlet_forecast(req):
+    catch = req.catchment_pop_2026 or 40000
+    scale = (catch / 40000) ** 0.35
+    skus = [("BB ORI 500g", "ORI", 500, 9.4), ("BB ORI 250g", "ORI", 250, 8.1),
+            ("BB S4B 250g", "S4B", 250, 6.2), ("BB CHOCO 100g", "CHOCO", 100, 4.0),
+            ("BB VANILLA 250g", "VANILLA", 250, 2.3)]
+    rows = [{"sku": s, "flavor": f, "pack_size_g": p, "predicted_units_per_week": round(u * scale, 2)}
+            for s, f, p, u in skus]
+    return {"chain": req.chain, "branch": req.branch, "sub_county": req.sub_county or "EMBAKASI",
+            "dominant_income_segment": req.dominant_income_segment or "middle",
+            "catchment_pop_2026": catch, "built_growth_annual": req.built_growth_annual or 0.025,
+            "total_units_per_week": round(sum(r["predicted_units_per_week"] for r in rows), 1),
+            "skus": rows}

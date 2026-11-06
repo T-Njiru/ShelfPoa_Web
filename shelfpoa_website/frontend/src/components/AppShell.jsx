@@ -1,10 +1,18 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { NavLink, Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "../services/firebase";
 import { IDLE_MINUTES, useSession } from "../services/session";
+import { initials } from "../lib/format";
 import { Logo } from "./Logo";
 import LogoutButton from "./LogoutButton";
+
+// Pages with a working header search, and what it searches there
+const SEARCH_HINT = {
+  "/": "Search merchandisers, outlets, sub-counties…",
+  "/recommendations": "Search outlets, SKUs, products…",
+  "/stockouts": "Search SKUs, outlets, reporters…",
+};
 
 const NAV = [
   { to: "/", label: "Merchandiser performance" },
@@ -39,6 +47,8 @@ function useIdleLogout(enabled) {
 export default function AppShell() {
   const { pathname } = useLocation();
   const { status, user } = useSession();
+  const [query, setQuery] = useState("");
+  useEffect(() => setQuery(""), [pathname]); // each page starts unfiltered
   useIdleLogout(status === "ok");
   useEffect(() => {
     if (status === "forbidden" && auth) signOut(auth); // e.g. a merchandiser account: end its web session
@@ -84,7 +94,9 @@ export default function AppShell() {
         </nav>
 
         <div className="mt-auto mx-1 flex items-center gap-3 rounded-control bg-card px-3 h-[54px]">
-          <div className="w-8 h-8 rounded-full bg-accent shrink-0" />
+          <div className="w-8 h-8 rounded-full bg-accent shrink-0 grid place-items-center text-[11px] font-bold text-ink">
+            {initials(name) || "A"}
+          </div>
           <div className="min-w-0 flex-1">
             <div className="text-xs font-semibold truncate">{name}</div>
             <div className="text-[10px] text-muted">Flora Food Group</div>
@@ -96,14 +108,18 @@ export default function AppShell() {
       <div className="flex-1 min-w-0 px-8 pt-[14px] pb-10">
         <header className="flex items-center h-[44px] mb-[38px] pr-3">
           <h1 className="text-[22px] font-semibold">{title}</h1>
-          <input
-            type="search"
-            placeholder="Search outlets, SKUs…"
-            className="ml-auto w-[260px] h-9 rounded-control bg-card px-4 text-xs text-white placeholder:text-muted outline-none focus:ring-1 focus:ring-accent"
-          />
-          <div className="ml-[160px] w-9 h-9 rounded-full bg-accent" />
+          {SEARCH_HINT[pathname] && (
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={SEARCH_HINT[pathname]}
+              aria-label="Search this page"
+              className="ml-auto w-[300px] h-9 rounded-control bg-card px-4 text-xs text-white placeholder:text-muted outline-none focus:ring-1 focus:ring-accent"
+            />
+          )}
         </header>
-        <Outlet />
+        <Outlet context={{ query }} />
       </div>
     </div>
   );

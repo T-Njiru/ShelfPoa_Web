@@ -3,6 +3,7 @@ import { api } from "../services/api";
 import { downloadCsv, initials, statTone, tone } from "../lib/format";
 import { Pill, PrimaryButton, Ring, StatCard, selectCls } from "../components/ui";
 import SubmissionsModal from "../components/SubmissionsModal";
+import { matches, useSearch } from "../lib/search";
 
 const COLS = "grid-cols-[minmax(170px,1.3fr)_minmax(140px,1.3fr)_minmax(80px,0.8fr)_minmax(80px,0.8fr)_minmax(80px,0.8fr)_minmax(120px,0.9fr)] gap-x-4";
 const avg = (rows, key) => (rows.length ? rows.reduce((s, r) => s + (Number(r[key]) || 0), 0) / rows.length : 0);
@@ -12,6 +13,7 @@ const titleCase = (s) => s.toLowerCase().replace(/(^|[\s'-])\w/g, (c) => c.toUpp
 const locationsOf = (r) => (r.sub_counties ?? []).map(titleCase);
 
 export default function MerchandiserPerformance() {
+  const query = useSearch();
   const [rows, setRows] = useState([]);
   const [openAlerts, setOpenAlerts] = useState("0");
   const [location, setLocation] = useState("");
@@ -35,7 +37,9 @@ export default function MerchandiserPerformance() {
   }, []);
 
   const locations = useMemo(() => [...new Set(rows.flatMap(locationsOf))].sort(), [rows]);
-  const visible = location ? rows.filter((r) => locationsOf(r).includes(location)) : rows;
+  const visible = rows
+    .filter((r) => !location || locationsOf(r).includes(location))
+    .filter((r) => matches(query, r.name, r.merchandiser_id, r.outlets ?? [], locationsOf(r)));
 
   const exportCsv = () =>
     downloadCsv(

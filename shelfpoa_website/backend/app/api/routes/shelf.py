@@ -46,7 +46,7 @@ _MOCK = [
 
 
 @router.get("/opportunities", response_model=list[ShelfOpportunity])
-def list_opportunities(limit: int = Query(10, ge=1, le=200),
+def list_opportunities(limit: int = Query(10, ge=1, le=500),
                        kind: Optional[Literal["sos", "planogram", "availability"]] = None):
     if settings.ml_mode == "live" and shelf_opportunities.available():
         return shelf_opportunities.opportunities(limit, kind)

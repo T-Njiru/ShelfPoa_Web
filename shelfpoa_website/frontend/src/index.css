@@ -15,4 +15,6 @@ body { font-family: "Inter", sans-serif; background-color: #2b2a33; color: #ffff
   button { font-family: inherit; }
   option { background-color: #38373f; color: #ffffff; }
   ::placeholder { color: #a8a6ad; opacity: 1; }
+  /* New outlet planner map: dark look for the OSM tiles (no tile API key needed) */
+.map-dark { filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9); }
 }

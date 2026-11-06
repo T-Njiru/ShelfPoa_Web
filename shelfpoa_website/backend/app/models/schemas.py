@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class SOSResult(BaseModel):
@@ -97,6 +97,11 @@ class NewOutletRequest(BaseModel):
     dominant_income_segment: Optional[str] = None  # high | middle | low; defaults to the chain's usual
     promo_days_in_week: int = 0
     mean_discount_pct: float = 0.0
+    # opening plan (app/ml/outlet_planner.py)
+    restock_days: int = Field(7, ge=1, le=60)          # days between deliveries
+    lead_time_days: int = Field(2, ge=0, le=30)        # order -> on shelf
+    service_level: float = Field(0.95, gt=0.5, lt=1)   # chance of NOT running out before the next delivery
+    blueband_facings: int = Field(40, ge=1, le=500)    # Blueband facings the branch will give the brand
 
 
 class NewOutletSkuForecast(BaseModel):
@@ -104,6 +109,63 @@ class NewOutletSkuForecast(BaseModel):
     flavor: str
     pack_size_g: int
     predicted_units_per_week: float
+    opening_stock_units: Optional[int] = None
+    safety_stock_units: Optional[int] = None
+    facings: Optional[int] = None
+
+
+class OutletBenchmark(BaseModel):
+    bb_share_pct: float   # Blueband share of the spreads shelf, last 28 days
+    osa_pct: float        # on-shelf availability, last 28 days
+    outlets: int
+
+
+class CatchmentSite(BaseModel):
+    chain: str
+    branch: str
+    sub_county: str
+    catchment_pop_2026: float
+    built_growth_annual: float
+
+
+class NearbyOutlet(BaseModel):
+    chain: str
+    branch: str
+    lat: float
+    lon: float
+    distance_km: float
+    catchment_pop_2026: float
+
+
+class LocationCatchment(BaseModel):
+    """Satellite catchment for a pinned point (interpolated from the Nairobi grid)."""
+    lat: float
+    lon: float
+    pop_1km: float
+    pop_2km: float
+    density_per_km2: float
+    catchment_pop_2026: float
+    built_growth_annual: float
+    sub_county: Optional[str] = None
+    sub_county_from: Optional[str] = None
+    nearby: list[NearbyOutlet] = []
+    in_training_range: bool = True
+
+
+class OutletPoint(BaseModel):
+    chain: str
+    branch: str
+    lat: float
+    lon: float
+
+
+class NewOutletOptions(BaseModel):
+    chains: list[str]
+    sub_counties: list[str]
+    income_segments: list[str]
+    sites: list[CatchmentSite]
+    points: list[OutletPoint] = []
+    grid_available: bool = False
 
 
 class NewOutletForecast(BaseModel):
@@ -115,4 +177,9 @@ class NewOutletForecast(BaseModel):
     built_growth_annual: float
     total_units_per_week: float
     skus: list[NewOutletSkuForecast]
+    opening_stock_total: Optional[int] = None
+    facings_total: Optional[int] = None
+    comparable_chain: Optional[OutletBenchmark] = None
+    comparable_chain_in_area: Optional[OutletBenchmark] = None
+    assumptions: Optional[dict] = None
 

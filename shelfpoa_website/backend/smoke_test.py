@@ -83,7 +83,18 @@ def _bigger_catchment_sells_more(_):
 
 check("new-outlet: existing outlet looked up", "POST", "/api/forecast/new-outlet",
       json={"chain": "Naivas", "branch": "Umoja"},
-      validate=lambda d: None if d["total_units_per_week"] > 0 and len(d["skus"]) == 15 else f"got {d}")
+      validate=lambda d: None if d["total_units_per_week"] > 0 and len(d["skus"]) == 13 else f"got {d}")
+check("new-outlet: opening plan (stock >= 1 week, facings add up)", "POST", "/api/forecast/new-outlet",
+      json={"chain": "Naivas", "branch": "Umoja", "blueband_facings": 40},
+      validate=lambda d: None if d["facings_total"] == 40 and all(
+          s["opening_stock_units"] >= s["predicted_units_per_week"] for s in d["skus"]) else f"got {d}")
+check("new-outlet: options list sites", "GET", "/api/forecast/new-outlet/options",
+      validate=lambda d: None if d["chains"] and len(d["sites"]) > 0 else f"got {d}")
+check("new-outlet: map pin -> catchment (needs scripts/build_catchment_grid.py run once)", "GET",
+      "/api/forecast/new-outlet/location?lat=-1.2891&lon=36.7620",
+      validate=lambda d: None if d["pop_2km"] > d["pop_1km"] > 0 and d["sub_county"] else f"got {d}")
+check("new-outlet: pin outside Nairobi -> 422", "GET", "/api/forecast/new-outlet/location?lat=-0.5&lon=36.7",
+      expect=422)
 check("new-outlet: more people nearby -> more demand", "POST", "/api/forecast/new-outlet",
       json={"chain": "Naivas", "sub_county": "EMBAKASI", "catchment_pop_2026": 20000,
             "built_growth_annual": 0.03}, validate=_bigger_catchment_sells_more)

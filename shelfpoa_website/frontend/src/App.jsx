@@ -5,6 +5,7 @@ import MerchandiserPerformance from "./pages/MerchandiserPerformance";
 import Recommendations from "./pages/Recommendations";
 import RecommendationMaker from "./pages/RecommendationMaker";
 import StockoutAlerts from "./pages/StockoutAlerts";
+import NewOutletPlanner from "./pages/NewOutletPlanner";
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
           <Route path="/recommendations" element={<Recommendations />} />
           <Route path="/recommendation-maker" element={<RecommendationMaker />} />
           <Route path="/stockouts" element={<StockoutAlerts />} />
+          <Route path="/new-outlet" element={<NewOutletPlanner />} />
         </Route>
       </Routes>
     </BrowserRouter>

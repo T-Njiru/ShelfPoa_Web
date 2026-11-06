@@ -94,7 +94,7 @@ check("new-outlet: unknown sub-county -> 422", "POST", "/api/forecast/new-outlet
 # --- basket ---
 check("basket/rules: default", "GET", "/api/basket/rules",
       validate=lambda d: None if len(d) > 0 and "lift" in d[0] else f"got {d}")
-check("basket/rules: sku filter", "GET", "/api/basket/rules?sku=BB%20VANILLA%20250g&limit=3",
+check("basket/rules: sku filter", "GET", "/api/basket/rules?sku=BB%20VANILLA%20500g&limit=3",
       validate=lambda d: None if 0 < len(d) <= 3 else f"got {len(d)} rows")
 check("basket/rules: limit=0 -> 422", "GET", "/api/basket/rules?limit=0", expect=422)
 

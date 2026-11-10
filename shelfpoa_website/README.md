@@ -3,7 +3,9 @@
 The administrator side of ShelfPoa, a shelf-intelligence system for Flora Food Group's Blueband SKUs in Nairobi modern-trade outlets. Merchandisers capture and analyse shelf photos in the Android app (`../ShelfPoa_mobile`); this platform lets administrators review the results and act on the model outputs.
 
 - `backend/` is a FastAPI service that serves the machine-learning outputs: demand forecasts, recommendations, basket rules, stock-outs, merchandiser performance and shelf opportunities.
-- `frontend/` is a React (Vite + Tailwind) admin console with four pages: Merchandiser performance, Recommendations, Recommendation maker and Stock-out alerts. Only accounts with the `admin` role can sign in.
+- `frontend/` is a React (Vite + Tailwind) admin console with five pages: Merchandiser performance, Recommendations, Recommendation maker, Stock-out alerts and New outlet planner. Only accounts with the `admin` role can sign in.
+
+For the whole system (mobile app included), see the [root README](../README.md).
 
 General data is read and written directly in Firebase. FastAPI only serves model-derived results.
 
@@ -78,6 +80,9 @@ Route signatures and response schemas are the same in both modes, so the fronten
 | GET | `/api/stockouts` | Open stock-outs from submitted OSA reports |
 | GET | `/api/merchandisers/performance` | SOS, OSA, compliance and visits per merchandiser |
 | GET | `/api/shelf/opportunities?kind=sos\|planogram` | XGBoost what-if: sales gained by raising SOS or compliance to a target |
+| POST | `/api/forecast/new-outlet` | Weekly demand, opening order, facings and expected SOS/OSA for a new outlet |
+| GET | `/api/forecast/new-outlet/options` | Chains, sub-counties, income segments, known sites and outlet map points |
+| GET | `/api/forecast/new-outlet/location?lat=&lon=` | Catchment at a map pin (people within 1/2 km, density, growth, nearby outlets) |
 
 ## Models and data
 
@@ -106,5 +111,6 @@ Every seed script does a dry run unless you pass `--yes`, and `--purge --yes` re
 | `seed_merchandiser_users.py` | Login accounts for the simulated merchandisers |
 | `link_merchandiser.py` | Turns a signed-up account into a merchandiser, e.g. `--email ... --name "..." --yes` |
 | `scripts/make_admin.py` | Gives an existing account the admin role |
+| `scripts/build_catchment_grid.py` | One-off Earth Engine run that builds `nairobi_catchment_grid.csv` for the map pin (needs `earthengine-api` and `earthengine authenticate`) |
 | `smoke_test.py` | Calls every endpoint against a running backend |
 | `forecast_feedback_demo.py` | Shows the forecast responding to new sales without retraining |

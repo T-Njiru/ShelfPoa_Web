@@ -77,6 +77,11 @@ def _init() -> bool:
     return True
 
 
+def ready() -> bool:
+    """True once the Admin SDK is initialised (needed to verify sign-in tokens)."""
+    return _init()
+
+
 def get_ref(path: str = "/"):
     """Reference for `path`, or None if Firebase isn't configured."""
     if not _init():

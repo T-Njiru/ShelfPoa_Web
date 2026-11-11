@@ -4,6 +4,7 @@ from app.core.config import settings
 from app.ml.registry import registry
 from app.ml import demand_model as forecast_service
 from app.ml import new_outlet, outlet_planner, location_lookup
+from app.api import filters
 from app.models.schemas import (WeeklyForecast, PlannedPromo, NewOutletRequest, NewOutletForecast,
                                 NewOutletOptions, LocationCatchment)
 from app.services import mock_data
@@ -18,6 +19,7 @@ def get_forecast(
     sku: str | None = Query(None, description="e.g. 'BB VANILLA 500g'"),
 ):
     if settings.ml_mode == "live" and registry.ready:
+        chain, branch, sku = filters.resolve(chain, branch, sku)   # unknown value -> 422, not []
         return forecast_service.forecast_next_week(chain=chain, branch=branch, sku=sku)
     return mock_data.get_forecast(chain=chain, branch=branch, sku=sku)
 
@@ -33,6 +35,7 @@ def get_forecast_with_promo(
     calls when checking whether a co-promotion from /api/recommendations is
     worth running."""
     if settings.ml_mode == "live" and registry.ready:
+        chain, branch, sku = filters.resolve(chain, branch, sku)
         return forecast_service.forecast_next_week(
             chain=chain, branch=branch, sku=sku, planned_promo=promo.model_dump()
         )

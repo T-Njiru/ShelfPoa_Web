@@ -21,5 +21,9 @@ class Settings(BaseSettings):
 
     frontend_origin: str = "http://localhost:5173"
 
+    # Every /api route except /api/health needs a signed-in admin/manager (app/core/auth.py).
+    # false = no check; for local experiments only.
+    auth_required: bool = True
+
 
 settings = Settings()

@@ -184,12 +184,10 @@ Per-SKU, per-outlet daily sales and shelf KPIs aren't recorded at this level of 
 
 - **The Firebase service-account key never goes in the repo.** Keep it outside the repo (e.g. `..\secrets\`) and point `GOOGLE_APPLICATION_CREDENTIALS` in the git-ignored `backend/.env` at it.
 - `google-services.json`, `.env*` files and service-account JSON files are all git-ignored.
-- **The FastAPI routes don't yet check Firebase login tokens.** Add that check before exposing the API publicly.
+- **Every API route except `/api/health` needs a signed-in admin or manager.** The console sends the user's Firebase ID token; the backend verifies it and checks `users/{uid}.role` (`backend/app/core/auth.py`). No token returns 401, a wrong role 403.
 
 ## Known limitations / next steps
-- Add Firebase login-token checks to the API, and remove the unused `backend/app/core/auth.py`.
 - Deploy: frontend to Firebase Hosting; backend to Cloud Run (Blaze plan) or a free host such as Hugging Face Spaces.
-- `requirements.txt` pins xgboost 2.1.1, but the models were trained on 2.1.4. Pin 2.1.4 before deploying.
 - Two legacy detector classes (`BB CHOCO 1Kg`, `BB VANILLA 250g`) aren't real products. They are filtered out of OSA and the console, but are still in the training data.
 - Share of shelf for new outlets is a benchmark from comparable outlets, not a trained prediction.
 - Every outlet is audited against the full 13-SKU range. Per-outlet assortments would make OSA fairer.

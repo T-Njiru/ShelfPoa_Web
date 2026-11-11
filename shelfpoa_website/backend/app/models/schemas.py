@@ -1,5 +1,5 @@
-from typing import Optional
-from pydantic import BaseModel, Field
+from typing import Literal, Optional
+from pydantic import BaseModel, Field, model_validator
 
 
 class SOSResult(BaseModel):
@@ -79,10 +79,22 @@ class WeeklyForecast(BaseModel):
     osa_last_week_pct: Optional[float] = None  # % of last week the SKU was on shelf (None: no shelf data)
 
 
+PromoType = Literal["none", "price_discount", "multi_buy", "bundle_with_complement", "display_feature"]
+
+
 class PlannedPromo(BaseModel):
-    promo_days_in_week: int = 0
-    mean_discount_pct: float = 0.0
-    dominant_promo_type: str = "none"  # price_discount | multi_buy | bundle_with_complement | display_feature | none
+    """A promotion planned for next week. Impossible values are rejected with a 422."""
+    promo_days_in_week: int = Field(0, ge=0, le=7)
+    mean_discount_pct: float = Field(0.0, ge=0, le=100)   # the model was trained on discounts up to 30%
+    dominant_promo_type: PromoType = "none"
+
+    @model_validator(mode="after")
+    def _consistent(self):
+        if self.promo_days_in_week == 0 and (self.mean_discount_pct > 0 or self.dominant_promo_type != "none"):
+            raise ValueError("promo_days_in_week is 0, so mean_discount_pct must be 0 and dominant_promo_type 'none'")
+        if self.promo_days_in_week > 0 and self.dominant_promo_type == "none":
+            raise ValueError("promo_days_in_week is above 0, so dominant_promo_type cannot be 'none'")
+        return self
 
 
 class NewOutletRequest(BaseModel):
@@ -92,11 +104,11 @@ class NewOutletRequest(BaseModel):
     chain: str
     sub_county: Optional[str] = None             # e.g. "EMBAKASI"
     branch: Optional[str] = None
-    catchment_pop_2026: Optional[float] = None   # people within ~2 km, distance-decayed
-    built_growth_annual: Optional[float] = None  # e.g. 0.035 = 3.5% a year
+    catchment_pop_2026: Optional[float] = Field(None, ge=0, le=2_000_000)   # people within ~2 km, distance-decayed
+    built_growth_annual: Optional[float] = Field(None, ge=-0.5, le=1.0)     # e.g. 0.035 = 3.5% a year
     dominant_income_segment: Optional[str] = None  # high | middle | low; defaults to the chain's usual
-    promo_days_in_week: int = 0
-    mean_discount_pct: float = 0.0
+    promo_days_in_week: int = Field(0, ge=0, le=7)
+    mean_discount_pct: float = Field(0.0, ge=0, le=100)
     # opening plan (app/ml/outlet_planner.py)
     restock_days: int = Field(7, ge=1, le=60)          # days between deliveries
     lead_time_days: int = Field(2, ge=0, le=30)        # order -> on shelf

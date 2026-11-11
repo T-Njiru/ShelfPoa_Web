@@ -1,4 +1,13 @@
+import { auth } from "./firebase";
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+
+// The API only answers signed-in admins/managers: send the user's Firebase ID token with every call.
+// getIdToken() returns the cached token and refreshes it by itself when it is about to expire.
+async function authHeaders() {
+  const user = auth?.currentUser;
+  return user ? { Authorization: `Bearer ${await user.getIdToken()}` } : {};
+}
 
 // Surfaces FastAPI's {"detail": "..."} message when there is one.
 async function failed(res, path) {
@@ -8,7 +17,7 @@ async function failed(res, path) {
 }
 
 async function get(path) {
-  const res = await fetch(`${BASE_URL}${path}`);
+  const res = await fetch(`${BASE_URL}${path}`, { headers: await authHeaders() });
   if (!res.ok) throw await failed(res, path);
   return res.json();
 }
@@ -16,7 +25,7 @@ async function get(path) {
 async function post(path, body) {
   const res = await fetch(`${BASE_URL}${path}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...(await authHeaders()) },
     body: JSON.stringify(body),
   });
   if (!res.ok) throw await failed(res, path);

@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Query
 
+from app.api import filters
+
 from app.core.config import settings
 from app.ml.registry import registry
 from app.ml import basket as basket_service
@@ -15,5 +17,6 @@ def list_rules(
     sku: str | None = Query(None, description="Filter by antecedent SKU, e.g. 'BB VANILLA 500g'"),
 ):
     if settings.ml_mode == "live" and registry.ready:
+        _, _, sku = filters.resolve(sku=sku)   # unknown SKU -> 422, not []
         return basket_service.get_rules(limit=limit, sku=sku)
     return mock_data.get_basket_rules(limit)

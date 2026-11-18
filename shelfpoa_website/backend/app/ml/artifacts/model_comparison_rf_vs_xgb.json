@@ -1,0 +1,525 @@
+{
+  "split": {
+    "train_rows": 13500,
+    "val_rows": 2250,
+    "test_rows": 2250,
+    "weeks": 16
+  },
+  "hyperparameters": {
+    "XGBoost A sales only": {
+      "max_depth": 5,
+      "learning_rate": 0.08,
+      "subsample": 0.85,
+      "colsample_bytree": 0.85,
+      "n_trees": 44
+    },
+    "Random Forest A sales only": {
+      "max_depth": 20,
+      "min_samples_leaf": 5,
+      "max_features": 0.33,
+      "n_trees": 300
+    },
+    "XGBoost B with shelf": {
+      "max_depth": 6,
+      "learning_rate": 0.05,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "n_trees": 88
+    },
+    "Random Forest B with shelf": {
+      "max_depth": 20,
+      "min_samples_leaf": 5,
+      "max_features": 0.33,
+      "n_trees": 300
+    },
+    "XGBoost best effort B": {
+      "max_depth": 6,
+      "learning_rate": 0.05,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "target": "raw",
+      "n_trees": 303
+    },
+    "Random Forest best effort B": {
+      "max_depth": 20,
+      "min_samples_leaf": 5,
+      "max_features": 0.33,
+      "target": "raw",
+      "encoding": "codes",
+      "n_trees": 300
+    }
+  },
+  "random_forest_grid": [
+    {
+      "max_depth": null,
+      "min_samples_leaf": 5,
+      "max_features": 0.5
+    },
+    {
+      "max_depth": null,
+      "min_samples_leaf": 2,
+      "max_features": 0.5
+    },
+    {
+      "max_depth": 20,
+      "min_samples_leaf": 5,
+      "max_features": 0.33
+    },
+    {
+      "max_depth": 20,
+      "min_samples_leaf": 10,
+      "max_features": 0.5
+    },
+    {
+      "max_depth": 12,
+      "min_samples_leaf": 5,
+      "max_features": 0.7
+    },
+    {
+      "max_depth": null,
+      "min_samples_leaf": 5,
+      "max_features": 1.0
+    }
+  ],
+  "test_scores": {
+    "Baseline: last week's sales -> observed sales": {
+      "MAE": 4.488,
+      "RMSE": 6.142,
+      "R2": 0.607,
+      "WAPE_pct": 34.218,
+      "bias_pct": -2.206
+    },
+    "Baseline: 3-week rolling mean -> observed sales": {
+      "MAE": 3.885,
+      "RMSE": 5.39,
+      "R2": 0.698,
+      "WAPE_pct": 29.625,
+      "bias_pct": -1.079
+    },
+    "XGBoost A sales only -> observed sales": {
+      "MAE": 3.661,
+      "RMSE": 5.123,
+      "R2": 0.727,
+      "WAPE_pct": 27.916,
+      "bias_pct": -9.481
+    },
+    "Random Forest A sales only -> observed sales": {
+      "MAE": 3.803,
+      "RMSE": 5.309,
+      "R2": 0.707,
+      "WAPE_pct": 28.998,
+      "bias_pct": -9.743
+    },
+    "XGBoost B with shelf -> observed sales": {
+      "MAE": 3.262,
+      "RMSE": 4.519,
+      "R2": 0.787,
+      "WAPE_pct": 24.874,
+      "bias_pct": -6.986
+    },
+    "Random Forest B with shelf -> observed sales": {
+      "MAE": 3.691,
+      "RMSE": 5.149,
+      "R2": 0.724,
+      "WAPE_pct": 28.145,
+      "bias_pct": -9.332
+    },
+    "XGBoost A sales only -> TRUE demand": {
+      "MAE": 3.634,
+      "RMSE": 5.097,
+      "R2": 0.737,
+      "WAPE_pct": 26.208,
+      "bias_pct": -14.387
+    },
+    "Random Forest A sales only -> TRUE demand": {
+      "MAE": 3.796,
+      "RMSE": 5.347,
+      "R2": 0.711,
+      "WAPE_pct": 27.378,
+      "bias_pct": -14.635
+    },
+    "XGBoost B with shelf (OSA=100) -> TRUE demand": {
+      "MAE": 3.36,
+      "RMSE": 4.661,
+      "R2": 0.78,
+      "WAPE_pct": 24.232,
+      "bias_pct": -7.675
+    },
+    "Random Forest B with shelf (OSA=100) -> TRUE demand": {
+      "MAE": 3.734,
+      "RMSE": 5.27,
+      "R2": 0.719,
+      "WAPE_pct": 26.93,
+      "bias_pct": -12.856
+    },
+    "XGBoost best effort B -> observed sales": {
+      "MAE": 3.141,
+      "RMSE": 4.262,
+      "R2": 0.811,
+      "WAPE_pct": 23.954,
+      "bias_pct": -0.611
+    },
+    "Random Forest best effort B -> observed sales": {
+      "MAE": 3.378,
+      "RMSE": 4.598,
+      "R2": 0.78,
+      "WAPE_pct": 25.759,
+      "bias_pct": -2.046
+    },
+    "XGBoost best effort B (OSA=100) -> TRUE demand": {
+      "MAE": 3.186,
+      "RMSE": 4.322,
+      "R2": 0.811,
+      "WAPE_pct": 22.977,
+      "bias_pct": -1.293
+    },
+    "Random Forest best effort B (OSA=100) -> TRUE demand": {
+      "MAE": 3.437,
+      "RMSE": 4.705,
+      "R2": 0.776,
+      "WAPE_pct": 24.784,
+      "bias_pct": -3.905
+    }
+  },
+  "stockout_weeks_true_demand_MAE": {
+    "rows": 437,
+    "XGBoost B with shelf": 3.0613473533765676,
+    "Random Forest B with shelf": 3.496161621902258,
+    "XGBoost best effort B": 2.8806771874700585,
+    "Random Forest best effort B": 3.1540346592382194
+  },
+  "bootstrap_rf_minus_xgb_shelf_model": {
+    "mae_diff": 0.428916631324578,
+    "ci95": [
+      0.3497503869742172,
+      0.523076088780033
+    ],
+    "share_of_resamples_a_better": 0.0,
+    "outlets": 75
+  },
+  "bootstrap_rf_minus_xgb_best_effort": {
+    "mae_diff": 0.2367165375928706,
+    "ci95": [
+      0.16331671974791478,
+      0.31574404492309366
+    ],
+    "share_of_resamples_a_better": 0.0,
+    "outlets": 75
+  },
+  "cv": {
+    "XGBoost A sales only": {
+      "1": {
+        "MAE": 3.8257,
+        "RMSE": 5.4364,
+        "R2": 0.7215,
+        "WAPE_pct": 29.3482,
+        "bias_pct": -9.5644
+      },
+      "2": {
+        "MAE": 3.9464,
+        "RMSE": 5.4658,
+        "R2": 0.7577,
+        "WAPE_pct": 27.5863,
+        "bias_pct": -8.3397
+      },
+      "3": {
+        "MAE": 5.5618,
+        "RMSE": 7.9053,
+        "R2": 0.6166,
+        "WAPE_pct": 34.9504,
+        "bias_pct": -17.8449
+      },
+      "4": {
+        "MAE": 3.5963,
+        "RMSE": 4.9554,
+        "R2": 0.7609,
+        "WAPE_pct": 27.7905,
+        "bias_pct": 0.5196
+      },
+      "5": {
+        "MAE": 3.5629,
+        "RMSE": 4.8922,
+        "R2": 0.7549,
+        "WAPE_pct": 27.392,
+        "bias_pct": -9.3134
+      }
+    },
+    "Random Forest A sales only": {
+      "1": {
+        "MAE": 3.8847,
+        "RMSE": 5.516,
+        "R2": 0.7132,
+        "WAPE_pct": 29.8008,
+        "bias_pct": -11.1903
+      },
+      "2": {
+        "MAE": 4.1264,
+        "RMSE": 5.7651,
+        "R2": 0.7304,
+        "WAPE_pct": 28.8445,
+        "bias_pct": -11.1894
+      },
+      "3": {
+        "MAE": 5.6279,
+        "RMSE": 7.8667,
+        "R2": 0.6203,
+        "WAPE_pct": 35.366,
+        "bias_pct": -14.5937
+      },
+      "4": {
+        "MAE": 3.7286,
+        "RMSE": 5.1329,
+        "R2": 0.7435,
+        "WAPE_pct": 28.8127,
+        "bias_pct": 1.9386
+      },
+      "5": {
+        "MAE": 3.6849,
+        "RMSE": 5.0841,
+        "R2": 0.7353,
+        "WAPE_pct": 28.3296,
+        "bias_pct": -8.6806
+      }
+    },
+    "XGBoost B with shelf": {
+      "1": {
+        "MAE": 3.4883,
+        "RMSE": 4.8891,
+        "R2": 0.7747,
+        "WAPE_pct": 26.7599,
+        "bias_pct": -6.5945
+      },
+      "2": {
+        "MAE": 3.5057,
+        "RMSE": 4.8418,
+        "R2": 0.8099,
+        "WAPE_pct": 24.5057,
+        "bias_pct": -6.3418
+      },
+      "3": {
+        "MAE": 5.053,
+        "RMSE": 7.2198,
+        "R2": 0.6802,
+        "WAPE_pct": 31.7534,
+        "bias_pct": -16.8358
+      },
+      "4": {
+        "MAE": 3.3305,
+        "RMSE": 4.5464,
+        "R2": 0.7987,
+        "WAPE_pct": 25.7366,
+        "bias_pct": 3.3282
+      },
+      "5": {
+        "MAE": 3.2372,
+        "RMSE": 4.4315,
+        "R2": 0.7988,
+        "WAPE_pct": 24.8879,
+        "bias_pct": -7.701
+      }
+    },
+    "Random Forest B with shelf": {
+      "1": {
+        "MAE": 3.7453,
+        "RMSE": 5.3303,
+        "R2": 0.7322,
+        "WAPE_pct": 28.7313,
+        "bias_pct": -10.6254
+      },
+      "2": {
+        "MAE": 4.0007,
+        "RMSE": 5.6175,
+        "R2": 0.7441,
+        "WAPE_pct": 27.9658,
+        "bias_pct": -11.2077
+      },
+      "3": {
+        "MAE": 5.4889,
+        "RMSE": 7.7231,
+        "R2": 0.6341,
+        "WAPE_pct": 34.4923,
+        "bias_pct": -15.0937
+      },
+      "4": {
+        "MAE": 3.6327,
+        "RMSE": 4.9885,
+        "R2": 0.7577,
+        "WAPE_pct": 28.0716,
+        "bias_pct": 2.3089
+      },
+      "5": {
+        "MAE": 3.5719,
+        "RMSE": 4.947,
+        "R2": 0.7493,
+        "WAPE_pct": 27.4612,
+        "bias_pct": -8.1152
+      }
+    },
+    "XGBoost best effort B": {
+      "1": {
+        "MAE": 3.5341,
+        "RMSE": 4.9082,
+        "R2": 0.7729,
+        "WAPE_pct": 27.1115,
+        "bias_pct": -1.8116
+      },
+      "2": {
+        "MAE": 3.4876,
+        "RMSE": 4.7628,
+        "R2": 0.816,
+        "WAPE_pct": 24.3789,
+        "bias_pct": -2.5905
+      },
+      "3": {
+        "MAE": 5.0316,
+        "RMSE": 7.2199,
+        "R2": 0.6802,
+        "WAPE_pct": 31.6187,
+        "bias_pct": -18.2991
+      },
+      "4": {
+        "MAE": 3.2648,
+        "RMSE": 4.4393,
+        "R2": 0.8081,
+        "WAPE_pct": 25.2287,
+        "bias_pct": 3.2655
+      },
+      "5": {
+        "MAE": 3.04,
+        "RMSE": 4.1251,
+        "R2": 0.8257,
+        "WAPE_pct": 23.3718,
+        "bias_pct": -2.5687
+      }
+    },
+    "Random Forest best effort B": {
+      "1": {
+        "MAE": 3.515,
+        "RMSE": 4.9531,
+        "R2": 0.7688,
+        "WAPE_pct": 26.9644,
+        "bias_pct": -2.6854
+      },
+      "2": {
+        "MAE": 3.6498,
+        "RMSE": 5.0266,
+        "R2": 0.7951,
+        "WAPE_pct": 25.5129,
+        "bias_pct": -3.4819
+      },
+      "3": {
+        "MAE": 5.1087,
+        "RMSE": 7.1794,
+        "R2": 0.6838,
+        "WAPE_pct": 32.1031,
+        "bias_pct": -9.576
+      },
+      "4": {
+        "MAE": 3.6949,
+        "RMSE": 5.0133,
+        "R2": 0.7553,
+        "WAPE_pct": 28.5522,
+        "bias_pct": 11.3531
+      },
+      "5": {
+        "MAE": 3.2814,
+        "RMSE": 4.4802,
+        "R2": 0.7944,
+        "WAPE_pct": 25.2278,
+        "bias_pct": -1.7711
+      }
+    }
+  },
+  "cv_mean": {
+    "XGBoost A sales only": {
+      "MAE": 4.0986,
+      "RMSE": 5.731,
+      "R2": 0.7223,
+      "WAPE_pct": 29.4135
+    },
+    "Random Forest A sales only": {
+      "MAE": 4.2105,
+      "RMSE": 5.8729,
+      "R2": 0.7085,
+      "WAPE_pct": 30.2307
+    },
+    "XGBoost B with shelf": {
+      "MAE": 3.723,
+      "RMSE": 5.1857,
+      "R2": 0.7725,
+      "WAPE_pct": 26.7287
+    },
+    "Random Forest B with shelf": {
+      "MAE": 4.0879,
+      "RMSE": 5.7213,
+      "R2": 0.7235,
+      "WAPE_pct": 29.3444
+    },
+    "XGBoost best effort B": {
+      "MAE": 3.6716,
+      "RMSE": 5.0911,
+      "R2": 0.7806,
+      "WAPE_pct": 26.3419
+    },
+    "Random Forest best effort B": {
+      "MAE": 3.85,
+      "RMSE": 5.3305,
+      "R2": 0.7595,
+      "WAPE_pct": 27.6721
+    }
+  },
+  "random_forest_B_importance": {
+    "rolling_mean_3w": 0.3015,
+    "lag_1w": 0.19952,
+    "lag_2w": 0.14565,
+    "chain": 0.08255,
+    "sku": 0.07966,
+    "flavor": 0.05702,
+    "branch": 0.03004,
+    "osa_pct_week": 0.02631,
+    "frac_reopen_spike": 0.01556,
+    "ses_index_0_100": 0.01359,
+    "pack_size_g": 0.01331,
+    "sub_county": 0.01215,
+    "frac_school_closed": 0.00766,
+    "dominant_income_segment": 0.00469,
+    "mean_discount_pct": 0.00285,
+    "promo_days_in_week": 0.0028,
+    "dominant_promo_type": 0.00192,
+    "planogram_pct_week": 0.00178,
+    "bb_share_pct_week": 0.00091,
+    "osa_pct_lag_1w": 0.00055
+  },
+  "random_forest_B_shelf_importance_share_pct": 2.954553063953119,
+  "timings_seconds": {
+    "XGBoost A sales only": {
+      "tuning_s": 13.221186400041915,
+      "predict_test_ms": 5.388299992773682,
+      "cv_s": 2.596909100015182
+    },
+    "Random Forest A sales only": {
+      "tuning_s": 5.116546000004746,
+      "predict_test_ms": 62.6930000144057,
+      "cv_s": 2.5894073999952525
+    },
+    "XGBoost B with shelf": {
+      "tuning_s": 5.09835549996933,
+      "predict_test_ms": 7.641199976205826,
+      "cv_s": 6.0090686999610625
+    },
+    "Random Forest B with shelf": {
+      "tuning_s": 7.274026500002947,
+      "predict_test_ms": 68.60239995876327,
+      "cv_s": 3.0199285999988206
+    },
+    "XGBoost best effort B": {
+      "tuning_s": 3.168651999963913,
+      "cv_s": 2.0303426000173204
+    },
+    "Random Forest best effort B": {
+      "tuning_s": 25.76921040000161,
+      "cv_s": 3.07138350000605
+    }
+  },
+  "notes": "Deployable comparison: same monotone constraints, log1p target, split and tuning protocol; Random Forest categoricals as integer codes. Best-effort comparison: shelf model only, no monotone constraints, target (and RF encoding) chosen on validation. Report only; the API still serves XGBoost."
+}

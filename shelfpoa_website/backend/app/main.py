@@ -7,7 +7,7 @@ from app.core.auth import dashboard_user
 from app.core.config import settings
 from app.ml.registry import registry
 from app.services import merchandiser_performance
-from app.api.routes import forecast, recommendations, basket, stockouts, merchandisers, outlets, shelf
+from app.api.routes import forecast, recommendations, basket, stockouts, merchandisers, outlets, shelf, public
 
 
 @asynccontextmanager
@@ -47,6 +47,7 @@ app.include_router(stockouts.router, dependencies=signed_in)
 app.include_router(merchandisers.router, dependencies=signed_in)
 app.include_router(outlets.router, dependencies=signed_in)
 app.include_router(shelf.router, dependencies=signed_in)
+app.include_router(public.router)   # aggregate counts for the sign-in page; no sign-in needed
 
 
 @app.get("/api/health")

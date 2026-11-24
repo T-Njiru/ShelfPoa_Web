@@ -43,6 +43,7 @@ function normaliseForecast(r) {
     sku: r.sku,
     branch_name: r.branch_name ?? [r.chain, r.branch].filter(Boolean).join(" "),
     sub_county: r.sub_county ?? "",
+    forecast_week_start: r.forecast_week_start ?? null, // "2026-10-16": the week being forecast
     forecast_units_next_7d: Math.round(predicted * 10) / 10,
     recent_avg: recent,
     // % change of next week's forecast vs the last 3 weeks' average (null when there is no history)
@@ -76,6 +77,12 @@ export const api = {
   getNewOutletOptions: () => get(`/api/forecast/new-outlet/options`),
   planNewOutlet: (body) => post(`/api/forecast/new-outlet`, body),
   getLocationCatchment: (lat, lon) => get(`/api/forecast/new-outlet/location?lat=${lat}&lon=${lon}`),
+  // No sign-in needed: aggregate counts for the login page (also wakes the free-tier server)
+  // Saved in Firebase: survives a refresh, re-opens by itself if a later audit finds the SKU missing
+  getStockoutHistory: (a) =>
+    get(`/api/stockouts/history?outlet_id=${encodeURIComponent(a.outlet_id)}&sku=${encodeURIComponent(a.sku)}`),
+  resolveStockout: (a) => post("/api/stockouts/resolve", { outlet_id: a.outlet_id, sku: a.sku, detected_at: a.detected_at }),
+  getPublicStats: () => get("/api/public/stats"),
   getShelfOpportunities: (limit = 3, kind) =>
     get(`/api/shelf/opportunities?limit=${limit}${kind ? `&kind=${kind}` : ""}`),
 };

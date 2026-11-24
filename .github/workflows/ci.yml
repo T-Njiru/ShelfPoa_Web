@@ -1,0 +1,38 @@
+# Runs on every push and pull request: backend unit tests + web console build.
+# (The Android app is built in Android Studio; the smoke test needs Firebase, so it is run by hand.)
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: shelfpoa_website/backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: pip
+          cache-dependency-path: shelfpoa_website/backend/requirements*.txt
+      - run: pip install -r requirements-dev.txt
+      - run: python -m pytest -q
+
+  web-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: shelfpoa_website/frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: shelfpoa_website/frontend/package-lock.json
+      - run: npm ci
+      - run: npm run build

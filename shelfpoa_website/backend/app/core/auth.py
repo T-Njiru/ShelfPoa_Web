@@ -11,7 +11,9 @@ If there is no users/{uid} record, a `role` custom claim on the token is used in
 only be set with the service-account key, e.g. by smoke_test.py).
 
     401  no token, or the token is invalid / expired
-    403  signed in, but not an admin or manager (or the account is deactivated)
+    403  signed in, but not an admin or manager (or the account is deactivated). A Google sign-in
+         from outside the Flora Food Group domains gets a clearer message; it is only accepted
+         for an account an admin has already given a role.
     503  the backend has no Firebase credentials, so it cannot verify anyone
 
 AUTH_REQUIRED=false in backend/.env switches the check off (local experiments only; never deploy
@@ -62,6 +64,10 @@ def require_role(*roles: str):
                                 headers={"WWW-Authenticate": "Bearer"})
         role = _role_of(claims["uid"], claims)
         if role not in roles:
+            if (claims.get("firebase", {}).get("sign_in_provider") == "google.com"
+                    and not (claims.get("email_verified") and settings.email_allowed(claims.get("email")))):
+                raise HTTPException(403, "Google sign-in is for Flora Food Group accounts and accounts "
+                                         "an admin has already set up.")
             raise HTTPException(403, "This account does not have access to the admin console.")
         return {"uid": claims["uid"], "email": claims.get("email", ""), "role": role}
     return dependency

@@ -50,6 +50,21 @@ class StockoutAlert(BaseModel):
     detected_at: str
     status: str  # "open" | "acknowledged" | "resolved"
     reported_by: Optional[str] = None
+    resolved_by: Optional[str] = None   # set when status == "resolved"
+    resolved_at: Optional[str] = None   # ISO-8601 UTC
+
+
+class StockoutEvent(BaseModel):
+    """One entry in an alert's history."""
+    kind: Literal["out_of_stock", "in_stock", "resolved"]
+    at: str                      # ISO-8601 UTC
+    by: Optional[str] = None     # who reported the reading / who marked it resolved
+
+
+class ResolveStockout(BaseModel):
+    outlet_id: str = Field(..., min_length=1, max_length=200)
+    sku: str = Field(..., min_length=1, max_length=60)
+    detected_at: str = Field(..., min_length=1, max_length=40)   # the alert's detected_at
 
 
 class MerchandiserPerformance(BaseModel):

@@ -1,8 +1,8 @@
 ,MAE,RMSE,R2,WAPE_pct,bias_pct
 Baseline: last week's sales -> observed sales,4.488,6.142,0.607,34.218,-2.206
 Baseline: 3-week rolling mean -> observed sales,3.885,5.39,0.698,29.625,-1.079
-A sales only -> observed sales,3.615,5.055,0.734,27.568,-8.971
-B with shelf (actual OSA) -> observed sales,3.249,4.489,0.79,24.774,-6.591
-B + catchment (actual OSA) -> observed sales,3.242,4.486,0.79,24.718,-6.875
-A sales only -> TRUE demand,3.579,5.012,0.746,25.814,-13.904
-B with shelf (OSA=100) -> TRUE demand,3.339,4.615,0.784,24.077,-7.291
+A sales only -> observed sales,3.661,5.123,0.727,27.916,-9.481
+B with shelf (actual OSA) -> observed sales,3.262,4.519,0.787,24.874,-6.986
+B + catchment (actual OSA) -> observed sales,3.246,4.477,0.791,24.748,-6.724
+A sales only -> TRUE demand,3.634,5.097,0.737,26.208,-14.387
+B with shelf (OSA=100) -> TRUE demand,3.36,4.661,0.78,24.232,-7.675

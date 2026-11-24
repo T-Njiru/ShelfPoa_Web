@@ -28,6 +28,7 @@ import com.example.planogram_adherance_mobile.userI.*
 import com.example.planogram_adherance_mobile.ui.theme.*
 import com.example.planogram_adherance_mobile.models.CurrentUser
 import com.example.planogram_adherance_mobile.models.OfflineSync
+import com.example.planogram_adherance_mobile.models.AuthViewModel
 import com.example.planogram_adherance_mobile.models.Outlet // IMPORTANT: Check this path
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -155,9 +156,6 @@ fun AppNav(context: Context) {
                         navController.navigate("menu") { popUpTo("login") { inclusive = true } }
                     }
                 },
-                // Accounts are admin-provisioned from the web dashboard; self sign-up is disabled.
-                // TODO: remove the "Sign up" link from LoginScreen, then this parameter.
-                onNavigateToSignup = {}
             )
         }
 
@@ -182,7 +180,9 @@ fun AppNav(context: Context) {
                 onNavigateToHelp = { navController.navigate("help") },
                 onSignOut = {
                     Firebase.auth.signOut()
-                    CurrentUser.clear()  // NEW
+                    // also forget the chosen Google account, so the next sign-in shows the picker
+                    scope.launch { AuthViewModel.signOut(context) }
+                    CurrentUser.clear()
                     selectedOutlet = null
                     navController.navigate("login") { popUpTo("menu") { inclusive = true } }
                 }

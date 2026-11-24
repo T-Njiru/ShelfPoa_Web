@@ -4,6 +4,8 @@
 //   session ends when the browser/tab is closed instead of lasting forever.
 // * Access needs users/{uid}.role in ALLOWED_ROLES. A merchandiser account can sign in to the
 //   mobile app but not the admin console, even by typing a page URL.
+// * Google sign-in: Flora Food Group addresses, or any account an admin has already given a role
+//   (Login.jsx explains which). The API enforces the same rule.
 // * AppShell signs the user out after IDLE_MINUTES without activity.
 //
 // This guards the UI only. The data itself must be protected by Realtime Database rules

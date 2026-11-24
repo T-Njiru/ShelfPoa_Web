@@ -1,15 +1,55 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import {
+  GoogleAuthProvider,
   browserSessionPersistence,
   sendPasswordResetEmail,
   setPersistence,
   signInWithEmailAndPassword,
+  signInWithPopup,
   signOut,
 } from "firebase/auth";
 import { auth } from "../services/firebase";
+import { api } from "../services/api";
 import { ALLOWED_ROLES, fetchRole, useSession } from "../services/session";
+import { ALLOWED_DOMAINS, domainList, emailAllowed } from "../lib/allowedDomains";
 import { Logo } from "../components/Logo";
+
+const fmt = (n) => Number(n).toLocaleString("en-KE");
+
+// Live, aggregate figures from GET /api/public/stats (last 30 days). While the free-tier server
+// wakes up they show "…"; if it can't be reached they are hidden rather than faked.
+function LiveStats() {
+  const [stats, setStats] = useState(null); // null = loading, false = unavailable
+  useEffect(() => {
+    let alive = true;
+    api.getPublicStats().then((s) => alive && setStats(s)).catch(() => alive && setStats(false));
+    return () => {
+      alive = false;
+    };
+  }, []);
+  if (stats === false) return null;
+  const cards = [
+    [stats?.active_merchandisers, "Active merchandisers"],
+    [stats?.outlets_audited, stats ? `Outlets audited (of ${fmt(stats.outlets_total)})` : "Outlets audited"],
+    [stats?.store_visits, "Store visits"],
+  ];
+  return (
+    <div className="mt-[100px]">
+      <div className="grid grid-cols-3 gap-3 max-w-[460px]">
+        {cards.map(([value, label]) => (
+          <div key={label} className="rounded-card bg-white/15 px-4 py-4 min-h-[90px]">
+            <div className="text-2xl font-bold">{value == null ? "…" : fmt(value)}</div>
+            <div className="text-[11px] text-white/80">{label}</div>
+          </div>
+        ))}
+      </div>
+      <p className="mt-3 text-[11px] text-white/70">
+        {stats ? `Last ${stats.window_days} days, live from the audit database` : "Loading live figures…"}
+      </p>
+    </div>
+  );
+}
 
 const inputCls =
   "w-full h-12 rounded-control bg-card px-4 text-[13px] text-white placeholder:text-muted outline-none focus:ring-1 focus:ring-accent";
@@ -22,7 +62,7 @@ export default function Login() {
   const location = useLocation();
   const [error, setError] = useState(location.state?.reason ?? ""); // e.g. idle sign-out, no access
   const [info, setInfo] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // false | "password" | "google"
   const navigate = useNavigate();
   const { status } = useSession();
 
@@ -37,7 +77,7 @@ export default function Login() {
       setError("Sign-in isn't configured. Check the VITE_FIREBASE_* values in .env.local.");
       return;
     }
-    setLoading(true);
+    setLoading("password");
     try {
       // The session ends when the browser is closed (default would keep it signed in indefinitely)
       await setPersistence(auth, browserSessionPersistence);
@@ -50,6 +90,42 @@ export default function Login() {
       navigate(location.state?.from ?? "/", { replace: true });
     } catch {
       setError("Couldn't sign in. Check your email and password.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Flora Food Group Google accounts, or any account an admin has already set up (e.g. an existing
+  // admin's own Gmail). Either way it needs an admin/manager role; the API checks this again.
+  async function googleSignIn() {
+    setError("");
+    setInfo("");
+    if (!auth) return setError("Sign-in isn't configured. Check the VITE_FIREBASE_* values in .env.local.");
+    setLoading("google");
+    try {
+      await setPersistence(auth, browserSessionPersistence);
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: "select_account" });
+      const { user } = await signInWithPopup(auth, provider);
+      if (!ALLOWED_ROLES.includes(await fetchRole(user.uid))) {
+        await signOut(auth);
+        setError(
+          user.emailVerified && emailAllowed(user.email)
+            ? `${user.email} isn't activated for the admin console yet. Ask a ShelfPoa admin to give it access.`
+            : `Google sign-in is for Flora Food Group accounts (${domainList()}) and accounts an admin has already set up.`
+        );
+        return;
+      }
+      navigate(location.state?.from ?? "/", { replace: true });
+    } catch (e) {
+      if (e?.code === "auth/popup-closed-by-user" || e?.code === "auth/cancelled-popup-request") return;
+      setError(
+        e?.code === "auth/popup-blocked"
+          ? "Your browser blocked the Google window. Allow pop-ups for this site and try again."
+          : e?.code === "auth/account-exists-with-different-credential"
+            ? "This email already has a password account. Sign in with your password instead."
+            : "Couldn't sign in with Google. Try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -80,17 +156,7 @@ export default function Login() {
           </p>
         </div>
 
-        {/* Marketing figures from the Figma design — placeholders, not live data. */}
-        <div className="flex flex-wrap gap-5 mt-[100px]">
-          <div className="rounded-card bg-white/15 px-5 py-4 w-[200px] h-[90px]">
-            <div className="text-2xl font-bold">128</div>
-            <div className="text-[11px] text-white/80">Active merchandisers</div>
-          </div>
-          <div className="rounded-card bg-white/15 px-5 py-4 w-[212px] h-[90px]">
-            <div className="text-2xl font-bold">3,400+</div>
-            <div className="text-[11px] text-white/80">Outlets tracked weekly</div>
-          </div>
-        </div>
+        <LiveStats />
       </div>
 
       <div className="flex items-start pt-[158px] px-10 xl:px-24">
@@ -114,10 +180,10 @@ export default function Login() {
           </div>
 
           {mode === "signup" ? (
-            // Admin accounts are invite-only (the Figma footer says to contact the Flora Foods admin),
-            // so self-registration is intentionally not wired to Firebase.
+            // Admin accounts are invite-only, so self-registration is intentionally not wired to Firebase.
             <p className="text-[13px] text-muted leading-relaxed">
-              Accounts are created by your Flora Foods admin. Contact them to get access.
+              Accounts are created by your Flora Food Group admin. Contact them to get access. If you
+              have a Flora Food Group Google account, use "Continue with Google" and ask them to activate it.
             </p>
           ) : (
             <>
@@ -127,7 +193,7 @@ export default function Login() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@floragroup.co.ke"
+                placeholder={`you@${ALLOWED_DOMAINS[0] ?? "upfield.com"}`}
                 className={`${inputCls} mb-4`}
               />
 
@@ -149,12 +215,29 @@ export default function Login() {
 
               <button
                 type="submit"
-                disabled={loading}
+                disabled={Boolean(loading)}
                 className="mt-6 w-full h-12 rounded-control bg-accent hover:bg-accent-hover text-ink text-[13px] font-semibold text-left px-3 disabled:opacity-60"
               >
-                {loading ? "Signing in…" : "Log in to dashboard"}
+                {loading === "password" ? "Signing in…" : "Log in to dashboard"}
               </button>
-              <p className="mt-5 text-xs text-muted">Don't have an account? Contact your Flora Foods admin</p>
+
+              <div className="flex items-center gap-3 my-5 text-[11px] text-muted">
+                <span className="h-px flex-1 bg-white/10" />
+                or
+                <span className="h-px flex-1 bg-white/10" />
+              </div>
+              <button
+                type="button"
+                onClick={googleSignIn}
+                disabled={Boolean(loading)}
+                className="w-full h-12 rounded-control bg-white hover:bg-white/90 text-ink text-[13px] font-semibold disabled:opacity-60"
+              >
+                {loading === "google" ? "Waiting for Google…" : "Continue with Google"}
+              </button>
+              <p className="mt-2 text-[11px] text-muted">
+                For Flora Food Group Google accounts ({domainList()}) and accounts your admin has set up.
+              </p>
+              <p className="mt-5 text-xs text-muted">Don't have an account? Contact your Flora Food Group admin</p>
             </>
           )}
         </form>

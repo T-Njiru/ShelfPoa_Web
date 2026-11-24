@@ -64,7 +64,7 @@ flowchart LR
 **Stack:**
 - Kotlin and Jetpack Compose (Material 3), Navigation Compose
 - CameraX for photos; ONNX Runtime Android 1.18 for the detector
-- Room for local image storage; Firebase Auth and Realtime Database
+- Firebase Auth (email/password and Google, Flora Food Group accounts only) and Realtime Database; reports queue on the phone through Firebase disk persistence when offline
 - minSdk 26, targetSdk 34, JDK 17
 
 **Detector:** `app/src/main/assets/best_model.onnx`, a YOLOv8n model trained on proprietary Blueband shelf images (the images aren't included).
@@ -76,7 +76,7 @@ flowchart LR
 
 | Screen | What it does |
 |---|---|
-| Login / Sign-up | Firebase Auth. An admin turns new accounts into merchandisers. |
+| Login | Email/password (accounts created by an admin) or **Continue with Google** for Flora Food Group accounts (@upfield.com, @florafoodgroup.com) and accounts an admin has already set up. The account must be activated (a `merchandiser` role in `users/{uid}`) before the app opens. No self sign-up. |
 | Outlets | Pick the store being visited (`outlets_universe`) |
 | Share of Shelf | Photo → detections → **SOS by area**: Blueband box area ÷ all detected box area. The pass mark is 20%. |
 | OSA | Photo → facings per SKU across the 13-SKU range. The merchandiser confirms or corrects each SKU's availability, and corrections are recorded. |
@@ -113,7 +113,7 @@ Interactive docs are at `http://127.0.0.1:8000/docs` while the backend runs.
 
 ### Frontend (React admin console)
 
-Admin-only sign-in (Firebase Auth plus the `admin` role). There's a header search box on every page.
+Admin-only sign-in: email/password or **Continue with Google** (Flora Food Group domains, or an account an admin has already set up), plus the `admin`/`manager` role. The sign-in page shows live 30-day figures from `GET /api/public/stats` (aggregate counts only, no sign-in needed). There's a header search box on every page.
 
 | Page | Purpose |
 |---|---|
@@ -144,9 +144,23 @@ npm run dev                   # http://localhost:5173
 cd shelfpoa_website\backend
 py -m scripts.make_admin you@example.com
 
-# check every endpoint (backend running)
+# give a Flora Food Group Google account access (after its first sign-in)
+py -m scripts.make_admin someone@upfield.com              # admin console
+python link_merchandiser.py --email someone@upfield.com --yes   # mobile app
+
+# unit tests (no Firebase needed) and the end-to-end smoke test (backend running)
+pip install -r requirements-dev.txt
+python -m pytest -q
 python smoke_test.py
+
+# refresh the simulated audit data (the dashboard shows the last 30 days; re-run before a demo)
+python reseed_demo.py          # dry run
+python reseed_demo.py --yes
 ```
+
+GitHub Actions (`.github/workflows/ci.yml`) runs the unit tests and the web build on every push.
+
+**Google sign-in setup (once, Firebase console):** Authentication → Sign-in method → enable Google. For Android, add the app's SHA-1 fingerprint (Project settings → Your apps), then download the new `google-services.json` into `app/`. The allowed domains are set in three places that must match: `VITE_ALLOWED_EMAIL_DOMAINS` (web), `ALLOWED_EMAIL_DOMAINS` (backend) and `AllowedDomains.kt` (Android).
 
 ---
 
@@ -184,10 +198,11 @@ Per-SKU, per-outlet daily sales and shelf KPIs aren't recorded at this level of 
 
 - **The Firebase service-account key never goes in the repo.** Keep it outside the repo (e.g. `..\secrets\`) and point `GOOGLE_APPLICATION_CREDENTIALS` in the git-ignored `backend/.env` at it.
 - `google-services.json`, `.env*` files and service-account JSON files are all git-ignored.
-- **Every API route except `/api/health` needs a signed-in admin or manager.** The console sends the user's Firebase ID token; the backend verifies it and checks `users/{uid}.role` (`backend/app/core/auth.py`). No token returns 401, a wrong role 403.
+- **Every API route except `/api/health` and `/api/public/stats` needs a signed-in admin or manager.** The console sends the user's Firebase ID token; the backend verifies it and checks `users/{uid}.role` (`backend/app/core/auth.py`). No token returns 401, a wrong role 403.
+- **Google sign-in is for Flora Food Group domains and accounts an admin has already set up**, in both apps and checked again by the API. Every account needs an admin-given role, so signing in alone grants nothing.
 
 ## Known limitations / next steps
-- Deploy: frontend to Firebase Hosting; backend to Cloud Run (Blaze plan) or a free host such as Hugging Face Spaces.
+- Deployed on free tiers (Firebase Hosting + Render): the API sleeps after 15 minutes idle and takes about a minute to wake.
 - Two legacy detector classes (`BB CHOCO 1Kg`, `BB VANILLA 250g`) aren't real products. They are filtered out of OSA and the console, but are still in the training data.
 - Share of shelf for new outlets is a benchmark from comparable outlets, not a trained prediction.
 - Every outlet is audited against the full 13-SKU range. Per-outlet assortments would make OSA fairer.

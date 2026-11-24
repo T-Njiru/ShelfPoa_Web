@@ -1,8 +1,6 @@
 package com.example.planogram_adherance_mobile.userI
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -11,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -18,6 +17,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.planogram_adherance_mobile.models.AllowedDomains
 import com.example.planogram_adherance_mobile.models.AuthUiState
 import com.example.planogram_adherance_mobile.models.AuthViewModel
 import com.example.planogram_adherance_mobile.models.CurrentUser
@@ -25,21 +25,22 @@ import com.example.planogram_adherance_mobile.ui.theme.AppCoral
 import com.example.planogram_adherance_mobile.ui.theme.AppDarkBg
 import com.example.planogram_adherance_mobile.ui.theme.AppTextWhite
 
-// Auth-screen tokens not covered by the app theme. Shared with SignupScreen.kt.
+// Auth-screen tokens not covered by the app theme.
 internal val AuthFieldBg = Color(0xFF38373F)
 internal val AuthMutedText = Color(0xFFA8A6AE)
 internal val AuthErrorText = Color(0xFFE0605A)
 
 /**
- * Email/password sign-in screen. Navigation is handled by the caller (AppNav),
- * matching the callback style used by SplashScreen.
+ * Sign-in screen: email + password (admin-created accounts) or "Continue with Google"
+ * (Flora Food Group accounts, or accounts an admin has already set up). There is no self sign-up. Navigation is handled by the
+ * caller (AppNav), matching the callback style used by SplashScreen.
  */
 @Composable
 fun LoginScreen(
     onLoginSuccess: () -> Unit,
-    onNavigateToSignup: () -> Unit,
     authViewModel: AuthViewModel = viewModel()
 ) {
+    val context = LocalContext.current   // the Activity: Credential Manager needs it to show the picker
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -114,21 +115,34 @@ fun LoginScreen(
             }
         }
 
-        Spacer(Modifier.height(16.dp))
-
-        Row {
-            Text("New merchandiser?  ", color = AuthMutedText, fontSize = 12.sp)
-            Text(
-                text = "Sign up",
-                color = AppCoral,
-                fontWeight = FontWeight.Bold,
-                fontSize = 12.sp,
-                modifier = Modifier.clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                ) { onNavigateToSignup() }
-            )
+        Spacer(Modifier.height(18.dp))
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+            HorizontalDivider(Modifier.weight(1f), color = AuthFieldBg)
+            Text("  or  ", color = AuthMutedText, fontSize = 12.sp)
+            HorizontalDivider(Modifier.weight(1f), color = AuthFieldBg)
         }
+        Spacer(Modifier.height(18.dp))
+
+        OutlinedButton(
+            onClick = { authViewModel.loginWithGoogle(context) },
+            enabled = uiState !is AuthUiState.Loading,
+            colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.White, contentColor = Color.Black),
+            shape = RoundedCornerShape(10.dp),
+            modifier = Modifier.fillMaxWidth().height(48.dp)
+        ) {
+            Text("Continue with Google", fontWeight = FontWeight.Bold, fontSize = 15.sp)
+        }
+        Spacer(Modifier.height(8.dp))
+        Text(
+            "For Flora Food Group Google accounts (${AllowedDomains.describe()}) and accounts your admin has set up.",
+            color = AuthMutedText, fontSize = 11.5.sp
+        )
+
+        Spacer(Modifier.height(20.dp))
+        Text(
+            "No account? Ask your Flora Food Group admin to create or activate one.",
+            color = AuthMutedText, fontSize = 12.sp
+        )
     }
 }
 

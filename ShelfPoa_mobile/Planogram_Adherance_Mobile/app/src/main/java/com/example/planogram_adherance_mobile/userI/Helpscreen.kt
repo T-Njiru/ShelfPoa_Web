@@ -20,8 +20,8 @@ private val TOPICS = listOf(
     HelpTopic(
         "Getting started",
         listOf(
-            "Log in with the work email and password your Flora Foods admin gave you.",
-            "Every check starts by choosing the outlet you are standing in. Pick it from the list before you take any photo.",
+            "Log in with the work email and password your Flora Food Group admin gave you, or tap Continue with Google.",
+            "The first time you use Google, your admin has to activate the account before the app opens.",
             "Checks done at the same outlet within 2 hours count as one store visit on the dashboard, so do the OSA, Share of Shelf and planogram checks in one go."
         )
     ),

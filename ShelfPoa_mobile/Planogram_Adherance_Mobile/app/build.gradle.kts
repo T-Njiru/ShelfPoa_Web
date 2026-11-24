@@ -1,7 +1,6 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.kapt") // Room
     id("org.jetbrains.kotlin.plugin.compose")
     id("kotlin-parcelize")
     alias(libs.plugins.google.gms.google.services)
@@ -71,11 +70,6 @@ dependencies {
     // ===== Navigation =====
     implementation("androidx.navigation:navigation-compose:2.7.3")
 
-    // ===== Room =====
-    val roomVersion = "2.6.1"
-    implementation("androidx.room:room-runtime:$roomVersion")
-    implementation("androidx.room:room-ktx:$roomVersion")
-    kapt("androidx.room:room-compiler:$roomVersion")
 
     // ===== ONNX Runtime =====
     implementation("com.microsoft.onnxruntime:onnxruntime-android:1.18.0")
@@ -102,6 +96,11 @@ dependencies {
 
     // ===== Coroutines <-> Firebase Task bridge (needed for .await()) =====
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
+
+    // ===== "Continue with Google" (Credential Manager -> Firebase Auth) =====
+    implementation("androidx.credentials:credentials:1.3.0")
+    implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
 
 
 }

@@ -76,6 +76,7 @@ def _fetch():
         "osa": normalize.osa_readings(got["osa_reports"], uid_to_merch),
         "sos": normalize.sos_visits(got["sos_audits"], uid_to_merch),
         "aud": normalize.audit_visits(got["audits"], uid_to_merch),
+        "outlet_count": len(got["outlets_universe"] or {}),
     }
 
 
@@ -217,3 +218,21 @@ def submissions(merchandiser_id: str, days: int | None = None, limit: int = 20, 
         })
     out.sort(key=lambda r: r["timestamp"], reverse=True)
     return out[:limit]
+
+def public_stats(now: datetime | None = None) -> dict | None:
+    """Aggregate counts for the sign-in page (no names, no per-outlet data), last WINDOW_DAYS days.
+    None when Firebase isn't configured."""
+    d = _load()
+    if d is None:
+        return None
+    now = now or datetime.now(timezone.utc)
+    cutoff = _iso(now - timedelta(days=WINDOW_DAYS))
+    recent = [v for v in _visits(d).values() if v["ts"] >= cutoff]
+    return {
+        "window_days": WINDOW_DAYS,
+        "active_merchandisers": len({v["m"] for v in recent}),
+        "outlets_audited": len({v["outlet"] for v in recent if v["outlet"]}),
+        "store_visits": len(recent),
+        "outlets_total": d.get("outlet_count", 0),
+        "as_of": _iso(now),
+    }

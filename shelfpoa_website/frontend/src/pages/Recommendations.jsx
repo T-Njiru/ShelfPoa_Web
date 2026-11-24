@@ -108,6 +108,12 @@ export default function Recommendations() {
   const [rules, setRules] = useState([]);
   const [forecasts, setForecasts] = useState([]);
   const [shelf, setShelf] = useState([]);
+  // The forecast is for the week after the last week of sales history, shown as a date so
+  // "next week" is never ambiguous (e.g. "16 Oct 2026").
+  const forecastWeek = (() => {
+    const d = forecasts.find((f) => f.forecast_week_start)?.forecast_week_start;
+    return d ? new Date(`${d}T00:00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : "";
+  })();
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
   const navigate = useNavigate();
@@ -255,7 +261,10 @@ export default function Recommendations() {
       {/* ---------------- XGBoost demand ---------------- */}
       {(tab === "all" || tab === "xgb") && (
         <section className="mb-6">
-          <SectionLabel>Demand forecast recommendations · XGBoost{tab === "all" && fcRows.length > TOP ? ` · top ${TOP} by demand` : ""}</SectionLabel>
+          <SectionLabel>
+            Demand forecast recommendations · XGBoost{forecastWeek ? ` · week of ${forecastWeek}` : ""}
+            {tab === "all" && fcRows.length > TOP ? ` · top ${TOP} by demand` : ""}
+          </SectionLabel>
           {tab === "xgb" && (
             <div className="flex items-center gap-3 mb-3">
               <Select value={fcSku} onChange={setFcSku} options={[["", "All SKUs"], ...SKUS.map((s) => [s, s])]} />

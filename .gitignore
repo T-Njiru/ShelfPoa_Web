@@ -32,3 +32,6 @@ Thumbs.db
 
 # --- Stray global pip freeze (not a project file) ---
 /requirements.txt
+
+# --- Firebase CLI deploy cache ---
+.firebase/

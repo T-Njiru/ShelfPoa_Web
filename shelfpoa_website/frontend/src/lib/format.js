@@ -51,3 +51,10 @@ export function downloadCsv(filename, rows) {
 
 export const initials = (name = "") =>
   name.split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0]).join("").toUpperCase();
+
+// "24 Nov 2026, 23:59" (local time): exact time for audit trails
+export function dateTimeLabel(iso) {
+  const d = new Date(iso);
+  if (isNaN(d)) return "—";
+  return `${d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}, ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}

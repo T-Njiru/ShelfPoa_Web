@@ -33,13 +33,16 @@ import random
 import re
 from datetime import datetime, timedelta, timezone
 
+# The 13 Blueband SKUs on the market (BB CHOCO 1Kg and BB VANILLA 250g are legacy detector
+# classes, not real products, so they are never seeded). Same list as REAL_SKUS on the website
+# and OSA.EXPECTED_SKUS in the mobile app.
 SKUS = [
-    "BB CHOCO 100g", "BB CHOCO 250g", "BB CHOCO 500g", "BB CHOCO 1Kg",
+    "BB CHOCO 100g", "BB CHOCO 250g", "BB CHOCO 500g",
     "BB ORI 100g", "BB ORI 250g", "BB ORI 500g", "BB ORI 1Kg",
     "BB S4B 100g", "BB S4B 250g", "BB S4B 500g", "BB S4B 1Kg",
-    "BB VANILLA 250g", "BB VANILLA 500g", "BB VANILLA 1Kg",
+    "BB VANILLA 500g", "BB VANILLA 1Kg",
 ]
-SLOW_SKUS = {"BB VANILLA 1Kg", "BB CHOCO 1Kg", "BB S4B 1Kg", "BB VANILLA 500g"}  # stock out more
+SLOW_SKUS = {"BB VANILLA 1Kg", "BB S4B 1Kg", "BB VANILLA 500g"}  # stock out more
 
 # Illustrative base probability that a SKU is found out of stock at a given audit
 CHAIN_OUT_RATE = {"Carrefour": 0.04, "Chandarana Foodplus": 0.05, "Naivas": 0.08,
@@ -69,8 +72,8 @@ def load_outlets(path: str) -> list[dict]:
 
 
 def generate(outlets: list[dict], days: int = 7, seed: int = 42, now: datetime | None = None) -> dict:
-    """Returns {push_key: record}. 2-3 audits per outlet over the last `days` days; each
-    audit reads all 15 SKUs, and stock-out state persists between audits."""
+    """Returns {push_key: record}. About one audit per outlet per week over the last `days` days
+    (at least 2); each audit reads all 13 SKUs, and stock-out state persists between audits."""
     rng = random.Random(seed)
     now = now or datetime.now(timezone.utc)
     out = {}
@@ -79,8 +82,9 @@ def generate(outlets: list[dict], days: int = 7, seed: int = 42, now: datetime |
         branch_name = f"{o['chain']} {o['branch']}"
         merch = f"m-{rng.randint(1, 8):02d}"
         base = CHAIN_OUT_RATE.get(o["chain"], 0.08)
+        weeks = max(1, days // 7)
         times = sorted(now - timedelta(seconds=rng.randint(3600, days * 86400))
-                       for _ in range(rng.randint(2, 3)))
+                       for _ in range(rng.randint(max(2, weeks), weeks + 1)))
         was_out = {sku: False for sku in SKUS}
         for n, t in enumerate(times, 1):
             t = t.replace(microsecond=0)
@@ -121,7 +125,7 @@ def chunked(d: dict, size: int = 500):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--outlets", help="outlet_subcounty_mapping.csv (needed unless --purge)")
-    ap.add_argument("--days", type=int, default=7)
+    ap.add_argument("--days", type=int, default=14)
     ap.add_argument("--purge", action="store_true", help="delete records with source == 'simulated'")
     ap.add_argument("--yes", action="store_true", help="actually write/delete (default is a dry run)")
     args = ap.parse_args()

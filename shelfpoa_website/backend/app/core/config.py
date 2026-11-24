@@ -25,5 +25,18 @@ class Settings(BaseSettings):
     # false = no check; for local experiments only.
     auth_required: bool = True
 
+    # "Continue with Google" is for Flora Food Group accounts, plus any account an admin has
+    # already given a role (e.g. an existing admin's own Gmail). Comma-separated email domains;
+    # must match VITE_ALLOWED_EMAIL_DOMAINS (web) and AllowedDomains.kt (Android).
+    allowed_email_domains: str = "upfield.com,florafoodgroup.com"
+
+    @property
+    def allowed_domains(self) -> list[str]:
+        return [d.strip().lower().lstrip("@") for d in self.allowed_email_domains.split(",") if d.strip()]
+
+    def email_allowed(self, email: str | None) -> bool:
+        domain = (email or "").lower().rpartition("@")[2]
+        return bool(domain) and domain in self.allowed_domains
+
 
 settings = Settings()
